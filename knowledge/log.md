@@ -2,6 +2,7 @@
 
 ## 2026-10-20
 
+* **Update**: Добавлены [docs/architecture.md](../docs/architecture.md) и [docs/setup.md](../docs/setup.md) — обзор архитектуры плагина и пошаговая установка в bb; README ссылается на них. Репозиторий запушен на github.com/dpolishuk/bb-kimi-code (public, MIT).
 * **Update**: Ревизия покрытия: live-тест turn'а с реальным tool call (kimi-live.tools.test.ts); по исходникам kimi-code подтверждены маппинг инструментов, субагенты (tool-строки), AskUserQuestion (approval с вариантами). Найдено отладкой: turn/start требует providerThreadId и clientRequestId формата creq_ + 10 base32-символов.
 * **Update**: Полное покрытие возможностей: переход на acp-next bridge (slash-команды и mode-селектор в bb), kimi-диалект с maintenance (install-план, sign-in detection, usage verdict); вердикты невозможности для видео и квоты — в [решении об ACP](decisions/acp-over-custom-bridge.md). Git инициализирован, работа коммитится поэтапно; [состояние репозитория](project-state.md) обновлено.
 * **Update**: Аудит покрытия kimi по коду ACP bridge: удалён сверхзаявленный `composerActions: ["plan"]`, добавлены skill-roots `.agents/skills`; матрица покрытия — в [решении об ACP](decisions/acp-over-custom-bridge.md). Тесты 11/11, сборка зелёная.

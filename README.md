@@ -84,6 +84,13 @@ remotely, through the same code path.
 bb server --> host daemon (any enrolled machine) --> kimi acp --> Kimi models
 ```
 
+## Documentation
+
+- [Architecture overview](docs/architecture.md) — components, request flow,
+  remote hosts, trust model, testing layers.
+- [Setup guide](docs/setup.md) — step by step: install bb, Kimi Code, the
+  plugin; first thread; remote hosts; troubleshooting.
+
 ## Development
 
 ```
