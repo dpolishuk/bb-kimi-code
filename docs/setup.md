@@ -104,6 +104,7 @@ bb settings general defaultProviderId kimi-code
 |---|---|
 | Provider shows "not installed" on a host | `kimi` missing on that host — use the provider card's Install action or step 3 |
 | Provider shows "unauthenticated" | run `kimi login` on the host, then reload the plugin or retry the thread |
+| Reasoning picker shows only "Thinking On" | a stale `kimi` shadows the real one on that host: `which -a kimi` — remove the old one (e.g. Homebrew's 0.x `kimi-code`), then let bb re-probe |
 | Provider missing from the picker | `bb plugin list` — the plugin must be loaded; reinstall with `bb plugin install ./bb-kimi-code` |
 | Model list is empty | the first `model/list` probe may need a few seconds; it also requires a signed-in `kimi` |
 | Plugin changes not picked up | `bb plugin reload kimi-code` |

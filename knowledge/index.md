@@ -26,3 +26,7 @@ okf_version: "0.2"
 # Ранбуки
 
 * [Проверка изменений плагина](runbooks/verify-plugin-change.md) — как проверять изменения: TDD-цикл, conformance kit, record/replay, команды `bb plugin`.
+
+# Инциденты
+
+* [Shadowing бинаря kimi: «Thinking On» вместо уровней](incidents/2026-10-20-shadowed-kimi-binary.md) — bb daemon запускал старый kimi-cli 0.23.5 из Homebrew вместо Kimi Code 2.x; диагностика через bb.db и пробы.
