@@ -68,7 +68,10 @@ SDK зафиксирован в `host.ts`.
 Поддержано и live-проверено против `kimi acp` 2.2.0:
 
 - треды/turn'ы, resume, fork — conformance 16/16;
-- каталог моделей и уровни thinking из `configOptions`;
+- каталог моделей и уровни thinking из `configOptions`; лестница декларации
+  включает `medium` (дефолт bb при создании треда), который bridge не мапит
+  на значение kimi — kimi остаётся на своём текущем уровне (дефолт high),
+  в пикере он подписан «Medium (Kimi default)»;
 - slash-команды kimi (`/compact`, `/status`, `/usage`, skill-команды) —
   публикуются как `bb/provider-commands` (live-тест
   `kimi-live.session-state.test.ts`);
