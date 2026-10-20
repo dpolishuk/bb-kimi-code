@@ -2,6 +2,7 @@
 
 ## 2026-10-20
 
+* **Update**: Полное покрытие возможностей: переход на acp-next bridge (slash-команды и mode-селектор в bb), kimi-диалект с maintenance (install-план, sign-in detection, usage verdict); вердикты невозможности для видео и квоты — в [решении об ACP](decisions/acp-over-custom-bridge.md). Git инициализирован, работа коммитится поэтапно; [состояние репозитория](project-state.md) обновлено.
 * **Update**: Аудит покрытия kimi по коду ACP bridge: удалён сверхзаявленный `composerActions: ["plan"]`, добавлены skill-roots `.agents/skills`; матрица покрытия — в [решении об ACP](decisions/acp-over-custom-bridge.md). Тесты 11/11, сборка зелёная.
 * **Creation**: Создан плагин `bb-plugin-kimi-code` v0.1.0 (server/host/icon/skill/тесты); зелёные: 11/11 юнит-тестов, `tsc`, `bb plugin build`, live conformance против `kimi acp` 16/16.
 * **Creation**: Добавлено решение [ACP вместо собственного bridge](decisions/acp-over-custom-bridge.md) с основаниями из живого handshake.

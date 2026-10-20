@@ -26,6 +26,15 @@ sources:
 
 Любое изменение provider-плагина (декларация, bridge, UI) перед утверждением «готово». Работаем по TDD: RED → GREEN → REFACTOR (см. корневой [AGENTS.md](../../AGENTS.md)).
 
+В этом репозитории дополнительно есть gated live-тесты против реального
+`kimi acp` (нужны установленный и залогиненный kimi; conformance тратит
+несколько токенов на один turn):
+
+```
+BB_KIMI_LIVE=1 npx vitest run kimi-live.conformance.test.ts \
+  kimi-live.session-state.test.ts kimi-live.maintenance.test.ts
+```
+
 # Шаги
 
 ## 1. Юнит и контрактные тесты (пишутся первыми, до реализации)
