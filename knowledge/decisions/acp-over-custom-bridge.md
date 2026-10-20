@@ -56,29 +56,46 @@ sources:
   доставляется на enrolled-хосты контент-адресуемо, `kimi` должен быть
   установлен и залогинен на хосте.[^acp-kit]
 
-# Аудит покрытия возможностей kimi (2026-10-20, по коду bridge 0.6.49)
+# Аудит покрытия возможностей kimi (финал 2026-10-20, SDK 0.6.49)
 
-Поддержано: треды/turn'ы, resume и fork (проверено live conformance 16/16),
-каталог моделей и уровни thinking из `configOptions`, `/compact` (bridge
-мапит standalone `/compact` на `session/prompt` с текстом `/compact` —
-функция `startCompaction`), image-ввод, скиллы из `.kimi-code/skills` и
-`.agents/skills` (user + project roots), permission modes (enforce'ит
-runtime, `approvalEnforcedBy: "runtime"`).
+Плагин использует entrypoint `provider-bridge/acp-next` (не `/acp`): в
+опубликованных SDK 0.6.49 и 0.6.54 только acp-next публикует
+`bb/provider-commands` и `bb/session-options` (`publishSessionSnapshot`) и
+поддерживает регистрацию диалектов (`experimental_registerAcpDialect`).
+acp-next помечен в документации bb как deprecated alias — риск при апгрейде
+SDK зафиксирован в `host.ts`.
 
-Не поддерживается generic-китом (проверено по `dist/provider-bridge-acp.js`):
+Поддержано и live-проверено против `kimi acp` 2.2.0:
 
-- **Plan mode**: `promptMode` в ACP bridge не обрабатывается, а
-  `plugins/provider-acp` заявляет `composerActions: []` для всех агентов.
-  Изначальная декларация `composerActions: ["plan"]` была ошибкой и
-  удалена в тот же день.
-- **Slash-команды kimi** (`available_commands_update`) не публикуются как
-  `bb/provider-commands` — в композере bb их нет.
-- **`mode` selector** (default/plan/auto/yolo) не публикуется как
-  `bb/session-options`; вместо него — permission modes bb.
-- **Video-ввод**: в ACP `promptCapabilities` видео нет (image: true,
-  audio: false).
-- **Usage/quota и управление установкой**: `maintenance.usage/installation`
-  выключены — стабильного машинного интерфейса у kimi для этого не найдено.
+- треды/turn'ы, resume, fork — conformance 16/16;
+- каталог моделей и уровни thinking из `configOptions`;
+- slash-команды kimi (`/compact`, `/status`, `/usage`, skill-команды) —
+  публикуются как `bb/provider-commands` (live-тест
+  `kimi-live.session-state.test.ts`);
+- селектор mode (default/plan/auto/yolo) — публикуется как
+  `bb/session-options` с `category: "mode"` (composer footer); plan mode
+  доступен через него. Прямой `composerActions: ["plan"]` не заявлен:
+  `promptMode` bridge игнорирует;
+- `/compact` — маппится на `session/prompt` "/compact";
+- установка из bb: диалект `kimi` отдаёт install-план официального скрипта
+  (live: `provider/installation/status` для отсутствующего бинаря);
+- sign-in статус: OAuth-файл или api_key в config.toml → health `ready`
+  (live); JWT kimi не содержит email — email всегда null;
+- image-ввод, embedded context; permission modes enforce'ит runtime.
+
+Не поддерживается (вердикт с основаниями):
+
+- **Video-ввод** — невозможно через ACP: в `promptCapabilities` есть только
+  image/audio (kimi: image true, audio false), контент-блока видео в
+  протоколе нет. Это ограничение протокола, не плагина.
+- **Usage/quota аккаунта** — у kimi нет машинного интерфейса квоты (ни CLI-
+  команды, ни поля конфигурации); `readUsage` честно возвращает
+  `{ supported: false }`, `maintenance.usage` выключен. Токены сессии
+  доступны через `/usage` в треде.
+- **Профили агентов** (`--agent/--agent-file`), `kimi vis`, `export` —
+  CLI-фичи вне ACP.
+- **MCP** — работает через собственную конфигурацию kimi (`/mcp-config`,
+  config.toml), bb им не управляет.
 
 [^kimi-readme]: MoonshotAI/kimi-code README
 [^kimi-acp-probe]: Локальный пробник kimi acp, 2026-10-20
