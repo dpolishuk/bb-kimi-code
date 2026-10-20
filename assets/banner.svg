@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="320" viewBox="0 0 1280 320">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b1026"/>
+      <stop offset="0.55" stop-color="#131a3a"/>
+      <stop offset="1" stop-color="#1d1040"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#7cc7ff"/>
+      <stop offset="1" stop-color="#b79cff"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#7cc7ff" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#7cc7ff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1280" height="320" rx="24" fill="url(#bg)"/>
+
+  <g fill="#ffffff" opacity="0.55">
+    <circle cx="90" cy="60" r="1.6"/>
+    <circle cx="210" cy="240" r="1.2"/>
+    <circle cx="340" cy="50" r="1.4"/>
+    <circle cx="520" cy="270" r="1.6"/>
+    <circle cx="700" cy="46" r="1.2"/>
+    <circle cx="880" cy="262" r="1.5"/>
+    <circle cx="1060" cy="70" r="1.3"/>
+    <circle cx="1180" cy="230" r="1.6"/>
+    <circle cx="1210" cy="110" r="1.1"/>
+    <circle cx="440" cy="120" r="1.1"/>
+    <circle cx="990" cy="160" r="1.2"/>
+    <circle cx="150" cy="170" r="1.3"/>
+  </g>
+
+  <circle cx="170" cy="160" r="110" fill="url(#glow)"/>
+  <g transform="translate(114 104) scale(4.6667)" fill="url(#accent)">
+    <path d="M19.514 7.342C19.711 7.862 19.814 8.413 19.816 8.969C19.816 12.494 15.998 14.697 12.946 12.934C11.529 12.116 10.657 10.605 10.657 8.969C10.657 5.646 14.085 3.431 17.115 4.793C15.26 3.373 12.99 2.607 10.655 2.612C4.772 2.614 0.005 7.381 0 13.265C0.002 19.148 4.772 23.918 10.655 23.92C16.538 23.916 21.306 19.147 21.31 13.265C21.312 11.155 20.687 9.095 19.514 7.342ZM14.841 4.666C14.841 8.191 18.657 10.395 21.709 8.632C23.127 7.814 24 6.302 24 4.666C24 1.14 20.184-1.061 17.13 0.699C15.714 1.519 14.841 3.03 14.841 4.666"/>
+  </g>
+
+  <text x="300" y="150" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="56" font-weight="700" fill="#f4f7ff">bb-kimi-code</text>
+  <text x="300" y="205" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="24" fill="#9fb3d9">Run Kimi Code inside bb — locally and on remote hosts</text>
+  <text x="300" y="248" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="17" fill="#63759c">a bb provider plugin over the Agent Client Protocol</text>
+</svg>
