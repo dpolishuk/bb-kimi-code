@@ -69,7 +69,7 @@ From the marketplace:
 bb marketplace add git:github.com/dpolishuk/bb-kimi-code@main
 ```
 
-then install **Kimi Code** from the `dpolishuk` catalog in
+then install **Kimi Code** from the `kimi-code` catalog in
 Settings → Plugins → Marketplace. Details and release flow:
 [docs/marketplace.md](docs/marketplace.md).
 

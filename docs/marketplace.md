@@ -14,16 +14,16 @@ bb marketplace list
 
 Then open **Settings → Plugins → Marketplace** in bb (or
 `bb plugin install kimi-code` flows from the catalog) and install **Kimi
-Code** from the `dpolishuk` catalog. Before installing, bb shows the true
-resolved source — the repository, the release tag, and the exact commit.
+Code** from the **Kimi Code for bb** catalog. Before installing, bb shows the
+true resolved source — the repository, the release tag, and the exact commit.
 
 Useful commands:
 
 ```
-bb marketplace refresh dpolishuk     # re-read the catalog and icons
+bb marketplace refresh kimi-code     # re-read the catalog and icons
 bb plugin outdated                   # see newer compatible releases
 bb plugin update kimi-code           # move to the latest release in ^0.1.0
-bb marketplace remove dpolishuk      # forget the catalog; installed plugins stay
+bb marketplace remove kimi-code      # forget the catalog; installed plugins stay
 ```
 
 The catalog entry installs the highest `vX.Y.Z` tag matching `^0.1.0`, and

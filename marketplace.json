@@ -1,9 +1,9 @@
 {
   "$schema": "https://getbb.app/schemas/marketplace.schema.json",
   "schemaVersion": 1,
-  "name": "dpolishuk",
-  "displayName": "dpolishuk Plugins",
-  "description": "Agent provider plugins maintained by Dmitry Polishuk.",
+  "name": "kimi-code",
+  "displayName": "Kimi Code for bb",
+  "description": "The Kimi Code provider plugin for bb, maintained by Dmitry Polishuk.",
   "plugins": [
     {
       "id": "kimi-code",
