@@ -63,6 +63,18 @@ no usage API), and MCP servers are configured by Kimi Code itself.
 
 ## Install
 
+From the marketplace:
+
+```
+bb marketplace add git:github.com/dpolishuk/bb-kimi-code@main
+```
+
+then install **Kimi Code** from the `dpolishuk` catalog in
+Settings → Plugins → Marketplace. Details and release flow:
+[docs/marketplace.md](docs/marketplace.md).
+
+Or directly:
+
 ```
 git clone https://github.com/dpolishuk/bb-kimi-code.git
 bb plugin install ./bb-kimi-code
