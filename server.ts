@@ -28,10 +28,15 @@ export default function plugin(bb: BbPluginApi) {
       supportsThreadArchive: false,
       supportsThreadRename: false,
       permissionModes: ["accept-edits", "auto", "full"],
-      reasoningLevels: ["low", "high", "max"],
+      // bb starts new threads at "medium" by default and validates the level
+      // against this ladder. kimi only knows low/high/max, so "medium" is
+      // declared but maps to nothing kimi-side: the bridge omits it and kimi
+      // runs its current thinking level (its default: high).
+      reasoningLevels: ["low", "medium", "high", "max"],
     },
     reasoningLevels: [
       { id: "low", label: "Thinking Low" },
+      { id: "medium", label: "Medium (Kimi default)" },
       { id: "high", label: "Thinking High" },
       { id: "max", label: "Thinking Max" },
     ],

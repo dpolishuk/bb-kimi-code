@@ -32,13 +32,26 @@ describe("the kimi-code provider declaration", () => {
       supportsThreadArchive: false,
       supportsThreadRename: false,
       permissionModes: ["accept-edits", "auto", "full"],
-      reasoningLevels: ["low", "high", "max"],
+      reasoningLevels: ["low", "medium", "high", "max"],
     });
+  });
+
+  it("declares the reasoning ladder with bb's default medium level", () => {
+    // bb starts new threads at "medium" by default and validates the level
+    // against this ladder; kimi itself only knows low/high/max, so "medium"
+    // falls back to kimi's current thinking level (its default: high).
+    expect(registeredDeclaration().capabilities.reasoningLevels).toEqual([
+      "low",
+      "medium",
+      "high",
+      "max",
+    ]);
   });
 
   it("labels the reasoning ladder the way kimi names its thinking levels", () => {
     expect(registeredDeclaration().reasoningLevels).toEqual([
       { id: "low", label: "Thinking Low" },
+      { id: "medium", label: "Medium (Kimi default)" },
       { id: "high", label: "Thinking High" },
       { id: "max", label: "Thinking Max" },
     ]);
