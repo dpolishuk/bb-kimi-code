@@ -44,11 +44,11 @@ describe("the kimi-code provider declaration", () => {
     ]);
   });
 
-  it("turns on health maintenance only", () => {
+  it("turns on health and installation maintenance", () => {
     expect(registeredDeclaration().maintenance).toEqual({
       health: true,
       usage: false,
-      installation: false,
+      installation: true,
     });
   });
 
@@ -76,7 +76,7 @@ describe("the kimi-code bridge options", () => {
       acpLaunchSpec?: unknown;
       acpDialect?: unknown;
     };
-    expect(options.acpDialect).toBeUndefined();
+    expect(options.acpDialect).toBe("kimi");
     expect(acpLaunchSpecSchema.parse(options.acpLaunchSpec)).toEqual({
       displayName: "Kimi Code",
       command: "kimi",

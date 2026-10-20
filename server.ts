@@ -19,7 +19,7 @@ export default function plugin(bb: BbPluginApi) {
         "Your Kimi Code session expired. Run `kimi login`, then reload.",
       installUrl: "https://github.com/MoonshotAI/kimi-code",
     },
-    maintenance: { health: true, usage: false, installation: false },
+    maintenance: { health: true, usage: false, installation: true },
     capabilities: {
       supportsServiceTier: false,
       supportsNativeUserQuestion: false,
@@ -48,6 +48,7 @@ export default function plugin(bb: BbPluginApi) {
       ],
     },
     experimental_bridgeOptions: {
+      acpDialect: "kimi",
       acpLaunchSpec: {
         displayName: "Kimi Code",
         command: "kimi",

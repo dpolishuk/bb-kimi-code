@@ -26,19 +26,17 @@ picker maps onto kimi's thinking levels: Low / High / Max.
 
 ## Modes and commands
 
-- `/compact` compacts the conversation context: bb's builtin compact
-  affordance is mapped by the ACP bridge onto kimi's `/compact` command.
-- Approval behavior is governed by bb's permission modes, which bb enforces
-  itself: `accept-edits` auto-approves file edits, `auto` adds commands and
-  tool calls, `full` approves everything.
+- kimi's slash commands (`/compact`, `/status`, `/usage`, skill commands)
+  appear in the composer's `/` menu from the live session.
+- kimi's mode selector (Default / Plan / Auto / YOLO) is published as the
+  session's `mode` option and sits in the composer footer; pick Plan there
+  for read-only planning.
+- bb's own permission modes still gate approvals on top:
+  `accept-edits` auto-approves file edits, `auto` adds commands and tool
+  calls, `full` approves everything.
 
 ## Limits
 
-- Plan mode is not wired through the generic ACP bridge; the composer offers
-  no plan action for this provider.
-- kimi's slash commands (`/status`, `/usage`, skill commands, and similar)
-  are not surfaced in bb's composer menu, and kimi's `mode` selector
-  (default/auto/yolo) is not exposed either — use bb permission modes.
 - Video input is not available through ACP (the handshake advertises image
   only); audio is not supported by kimi itself.
 - Fork is supported at the session tip only (`fork: "tip"`); checkpoint forks
