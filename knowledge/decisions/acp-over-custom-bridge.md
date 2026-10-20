@@ -4,8 +4,8 @@ title: Kimi Code подключается через готовый ACP-кит, 
 description: Почему провайдер Kimi Code — это реэкспорт bb ACP bridge с launch spec, а не самостоятельная реализация протокола.
 status: stable
 tags: [bb, kimi, acp, decision]
-generated: { by: kimi-code/k3, at: "2026-10-20T11:26:30Z" }
-verified: { by: kimi-code/k3, at: "2026-10-20T11:26:30Z" }
+generated: { by: kimi-code/k3, at: "2026-10-20T19:36:38Z" }
+verified: { by: kimi-code/k3, at: "2026-10-20T19:36:38Z" }
 sources:
   - id: kimi-readme
     resource: https://github.com/MoonshotAI/kimi-code
@@ -77,6 +77,21 @@ SDK зафиксирован в `host.ts`.
   доступен через него. Прямой `composerActions: ["plan"]` не заявлен:
   `promptMode` bridge игнорирует;
 - `/compact` — маппится на `session/prompt` "/compact";
+- **tool-pайплайн**: live-проверен turn с реальным Write-инструментом
+  (`kimi-live.tools.test.ts`): `item.open`/`item.close` с shape
+  fileChange/command/tool доезжают, turn оседает. Важно: `turn/start` требует
+  `providerThreadId` и `clientRequestId` формата `creq_` + 10 символов
+  base32 — найдено отладкой по wire-дампу;
+- маппинг инструментов kimi (Read/Write/Edit/Bash/WebFetch/Think →
+  read/edit/execute/fetch/think) покрыт generic-классификацией — по коду
+  `packages/acp-server/src/events-map.ts` в MoonshotAI/kimi-code;
+- **субагенты** (инструмент `Agent`, kind `other`) приходят generic tool-
+  строками — функционально; delegation-отображение — возможное улучшение
+  диалекта (по коду `agent/tools/agent/agentTool.ts`);
+- **AskUserQuestion** мапится kimi в ACP `session/request_permission` →
+  approval с вариантами ответа в bb (по коду `acp-server/src/question.ts`);
+  поэтому `supportsNativeUserQuestion: false` — вопросы работают, но не как
+  нативные карточки;
 - установка из bb: диалект `kimi` отдаёт install-план официального скрипта
   (live: `provider/installation/status` для отсутствующего бинаря);
 - sign-in статус: OAuth-файл или api_key в config.toml → health `ready`
