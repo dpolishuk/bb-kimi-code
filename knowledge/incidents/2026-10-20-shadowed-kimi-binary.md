@@ -51,9 +51,17 @@ sources:
 
 # Фикс
 
-Удалить/обновить старый пакет на машине: `brew uninstall kimi-code` (0.23.5),
-чтобы демон резолвил `~/.kimi-code/bin/kimi`. После этого bb перепробирует
-каталог (TTL кэша ~10 минут или перезапуск bb).
+Двухшаговый (применён 2026-10-21, проверен живым `bb provider models`):
+
+1. `brew uninstall kimi-code` — снял старый 0.23.5.
+2. `ln -s ~/.kimi-code/bin/kimi /opt/homebrew/bin/kimi` — **важно**: демон bb
+   имеет урезанный PATH приложения macOS, где `~/.kimi-code/bin` нет, а
+   `/opt/homebrew/bin` есть. После удаления старого пакета демон вообще не
+   находил `kimi` (`spawn kimi ENOENT`) — симлинк в `/opt/homebrew/bin`
+   восстанавливает разрешение имени.
+
+После этого bb перепробировал каталог сам: K3/K3-256k/K2.8 Preview —
+low/high/max, K2.7 Highspeed — on/high (истина kimi для этой модели).
 
 # Урок
 
