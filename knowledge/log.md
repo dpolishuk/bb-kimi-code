@@ -2,6 +2,12 @@
 
 ## 2026-10-22
 
+* **Update**: Аудит swarm и secondary model против kimi 2.3.0 (live-дамп
+  provider-commands/session-options + llms-full.txt) — в [решении об ACP](decisions/acp-over-custom-bridge.md):
+  swarm-мод и `/swarm` — TUI-only, через ACP не экспонируются (тул `AgentSwarm`
+  доступен агенту, живой turn не проверялся); secondary model — config.toml
+  kimi, работает прозрачно, из bb настраивается через `update-config`. Дамп
+  также расширил список публикуемых команд (14 + skill:*) против трёх в аудите 2.2.0.
 * **Update**: Codex-ревью PR #1 поднял P1: handshake моста заявлял `fork:
   "tip"` (хардкод SDK) против декларации `none`. По TDD добавлена обёртка
   `narrowInitializeForkOnBridge` (`src/handshake-fork.ts`, `host.ts`):

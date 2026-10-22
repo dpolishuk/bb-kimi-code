@@ -153,6 +153,38 @@ ACP-инструментов не содержат. Что изменилось 
   одновременно в живом bb-треде и в интерактивном kimi (`-S`/`--continue`) —
   второй клиент получит occupancy-ошибку.[^incident-23]
 
+## Дельта по swarm и secondary model (2026-10-22, live-дамп команд)
+
+Живой дамп `bb/provider-commands` и `bb/session-options` против kimi acp
+2.3.0 через наш bridge (thread/start без промпта):[^swarm-dump]
+
+- команды: `compact`, `status`, `usage`, `mcp`, `tasks`, `help`,
+  `check-kimi-code-docs`, `import-from-cc-codex`, `mcp-config`, `sub-skill`,
+  `sub-skill.consolidate`, `sub-skill.review`, `update-config`, `write-goal`,
+  плюс `skill:*` — против трёх (`compact`/`status`/`usage`) в аудите 2.2.0;
+- session-options: только `mode` (default/plan/auto/yolo).
+
+Вердикты:
+
+- **Swarm-режим** (мод сессии + команда `/swarm` + прогресс-панель) — TUI/web
+  -only, через ACP не экспонируется: ни mode-значения, ни `/swarm` в дампе
+  команд.[^swarm-dump] При этом тул `AgentSwarm` — обычный инструмент агента:
+  модель может вызвать его и в ACP-сессии (вне swarm-мода в manual — с
+  approval; approval enforce'ит runtime bb); на таймлайне выглядит generic
+  tool-строкой, как `Agent`. Живой turn с `AgentSwarm` не проверялся —
+  вывод из документации и кода kimi-code (llms-full.txt, тул-спека).
+  Delegation-отображение роя — то же возможное улучшение диалекта, что и для
+  `Agent`.
+- **Secondary model** (`[secondary_model]` / пул `[secondary_model.models]`,
+  stable с 2.2.x) — конфигурация config.toml kimi, через ACP не управляется
+  (`/secondary-model` в дампе команд отсутствует). Работает прозрачно
+  kimi-стороны: пул даёт тула́м `Agent`/`AgentSwarm` параметр `model`;
+  настроить из bb-треда можно командой `update-config` (публикуется) или
+  правкой `~/.kimi-code/config.toml`. bb-настройки плагина для пула нет —
+  и не нужно: bb не владеет конфигом kimi.
+
+[^swarm-dump]: Live-дамп provider-commands/session-options против kimi acp 2.3.0 (in-process bridge, thread/start без промпта), 2026-10-22; сверка с llms-full.txt moonshotai.github.io/kimi-code
+
 [^audit-23]: Свежие пробы handshake/session/new против kimi 2.3.0 и сверка с релиз-нотами, 2026-10-22
 [^incident-23]: Инцидент session lock, 2026-10-22
 
