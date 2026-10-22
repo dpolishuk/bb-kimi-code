@@ -21,7 +21,7 @@ sources:
     author: zcode
   - id: sdk-bundles
     resource: "@get-bb/plugin-sdk dist 0.6.49 и 0.6.68, provider-bridge-acp(-next).js, 2026-10-22"
-    title: initialize-ответ bridge хардкодит fork: "tip" в обеих версиях SDK
+    title: 'initialize-ответ bridge хардкодит fork: "tip" в обеих версиях SDK'
     author: zcode
 ---
 
