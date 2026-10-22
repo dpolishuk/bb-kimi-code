@@ -3,7 +3,8 @@ any remote host enrolled to your bb server.
 
 ## What you get
 
-- Kimi Code as a provider in bb, with streaming threads, resume, and fork
+- Kimi Code as a provider in bb, with streaming threads and resume (fork is
+  disabled: kimi ≥ 2.3.0 locks live sessions to their owning process)
 - The model picker filled from Kimi Code itself (`kimi-code/k3`,
   `kimi-code/k3-256k`, K2.8 Preview, K2.7 Code Highspeed)
 - Thinking levels (Low / High / Max) and the mode selector

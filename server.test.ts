@@ -23,17 +23,27 @@ describe("the kimi-code provider declaration", () => {
     expect(declaration.displayName).toBe("Kimi Code");
   });
 
-  it("declares the capabilities kimi acp advertises", () => {
+  it("declares the capabilities kimi acp advertises, minus live-broken fork", () => {
     expect(registeredDeclaration().capabilities).toEqual({
       supportsServiceTier: false,
       supportsNativeUserQuestion: false,
-      fork: "tip",
+      fork: "none",
       supportsManualCompaction: true,
       supportsThreadArchive: false,
       supportsThreadRename: false,
       permissionModes: ["accept-edits", "auto", "full"],
       reasoningLevels: ["low", "medium", "high", "max"],
     });
+  });
+
+  it("narrows fork to none because kimi locks live sessions to their process", () => {
+    // kimi >= 2.3.0 holds an exclusive per-session lock for as long as the
+    // owning kimi process lives, and bb forks by asking a NEW kimi process
+    // to fork the still-live source session — kimi rejects that with "This
+    // session is in use by another Kimi Code process". Tip-forks only work
+    // after the owner process exits, which bb's fork flow never guarantees,
+    // so the declaration must not offer fork.
+    expect(registeredDeclaration().capabilities.fork).toBe("none");
   });
 
   it("declares the reasoning ladder with bb's default medium level", () => {

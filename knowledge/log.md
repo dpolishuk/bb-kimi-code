@@ -1,5 +1,26 @@
 # Directory Update Log
 
+## 2026-10-22
+
+* **Update**: Аудит-дельта покрытия против kimi 2.3.0 (свежие пробы handshake/
+  session/new + релиз-ноты) — в [решении об ACP](decisions/acp-over-custom-bridge.md):
+  новых ACP-инструментов нет; handshake добавил `additionalDirectories`
+  (мост bb корни не пробрасывает — upstream-кандидат), `auth.logout`
+  (поверхности вызова в bb нет), kimi не эмитит `plan/update`; сессии
+  монопольны (bb-тред + интерактивный kimi на одной сессии конфликтуют).
+* **Fix**: kimi CLI тихо самообновился до 2.3.0 и сломал fork: live conformance
+  падал на `session/fork-identity` («This session is in use by another Kimi
+  Code process»). Диагноз двухпроцессным пробником: kimi 2.3.0 держит
+  эксклюзивный лок сессии на процесс, а bb форкает новым процессом — конфликт
+  моделей, отключения лока нет. Декларация сужена до `fork: "none"`, в live
+  conformance-тесте исход правила запинован, точный пин версии в
+  maintenance-тесте заменён на semver-паттерн. Подробности в
+  [инциденте](incidents/2026-10-22-kimi-23-session-lock-breaks-fork.md);
+  тексты (README/PLUGIN_OVERVIEW/SKILL) больше не обещают fork.
+* **Update**: Открытый вопрос про SDK закрыт проверкой: в 0.6.68 `/acp` и
+  `/acp-next` всё ещё раздельны и оба хардкодят `fork: "tip"` — апгрейд
+  отложен, причина зафиксирована в [состоянии репозитория](project-state.md).
+
 ## 2026-10-20
 
 * **Update**: Инцидент закрыт: после `brew uninstall kimi-code` демон bb перестал находить `kimi` (у приложения macOS урезанный PATH, без `~/.kimi-code/bin`) — добавлен симлинк в `/opt/homebrew/bin`; живой `bb provider models` подтвердил low/high/max. Детали в [инциденте](incidents/2026-10-20-shadowed-kimi-binary.md).

@@ -57,7 +57,29 @@ itLive("passes the canonical protocol suite against a real kimi acp", async () =
     });
 
     console.info(`kimi bridge live conformance:\n${formatConformanceReport(report)}`);
-    expect(report.passed).toBe(true);
+
+    // kimi >= 2.3.0 locks every session to its owning process, and bb forks
+    // by asking a NEW kimi process to fork the still-live source session, so
+    // session/fork-identity fails with the session-occupied error. The SDK
+    // bridge hardcodes fork: "tip" in its handshake, so the kit always runs
+    // the rule; the plugin can only narrow its own declaration (fork "none")
+    // and pin the live outcome here. When this pin breaks because
+    // session/fork-identity passes again (kimi drops the lock or the bridge
+    // stops over-advertising), restore fork: "tip" in server.ts and go back
+    // to asserting report.passed.
+    const forkIdentity = report.results.find(
+      (result) => result.id === "session/fork-identity",
+    );
+    expect(forkIdentity?.status).toBe("fail");
+    expect(forkIdentity?.detail).toContain(
+      "This session is in use by another Kimi Code process",
+    );
+    const rest = report.results.filter(
+      (result) => result.id !== "session/fork-identity",
+    );
+    expect(rest.map((result) => result.status)).toEqual(
+      rest.map(() => "pass"),
+    );
   } finally {
     output.restore();
   }

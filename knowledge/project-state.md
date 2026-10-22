@@ -5,7 +5,7 @@ description: Репозиторий — bb provider plugin `bb-plugin-kimi-code`
 status: stable
 tags: [project, state]
 generated: { by: kimi-code/k3, at: "2026-10-20T12:11:59Z" }
-verified: { by: kimi-code/k3, at: "2026-10-20T12:11:59Z" }
+verified: { by: zcode, at: "2026-10-22T19:40:00Z" }
 sources:
   - id: repo-ls
     resource: /Users/dpolishuk/work/bb-kimi-code
@@ -17,7 +17,7 @@ sources:
     author: kimi-code/k3
 ---
 
-# Наблюдаемые факты (проверены 2026-10-20)
+# Наблюдаемые факты (проверены 2026-10-22)
 
 - Репозиторий — bb provider plugin `bb-plugin-kimi-code` v0.1.0: `server.ts`
   (декларация), `host.ts` (acp-next bridge + регистрация диалекта),
@@ -26,11 +26,15 @@ sources:
   Покрытие возможностей: [решение об ACP](/decisions/acp-over-custom-bridge.md).[^repo-ls]
 - Bridge — `@get-bb/plugin-sdk/provider-bridge/acp-next` (см. риск deprecated
   alias в `host.ts` и в решении).[^repo-ls]
-- Проверки зелёные: `vitest run` — 20/20 юнит; `tsc --noEmit` чист;
-  `bb plugin build` собирает `dist/server.js` + `dist/host.js` (SDK 0.6.49,
-  bb 0.46.1). Live: conformance 16/16, session-state (commands +
-  session-options), maintenance (health ready, install-план, usage
-  unsupported).[^live-conformance]
+- Проверки зелёные (2026-10-22, kimi CLI 2.3.0): `vitest run` — 22/22 юнит;
+  `tsc --noEmit` чист; `bb plugin build` собирает `dist/server.js` +
+  `dist/host.js` (SDK 0.6.49, bb 0.46.1). Live: conformance — все правила,
+  кроме `session/fork-identity`, который [запинован как ожидаемо красный](/incidents/2026-10-22-kimi-23-session-lock-breaks-fork.md)
+  (session lock kimi 2.3.0); session-state, maintenance (health ready, без
+  пина точной версии), models, tools.[^live-2022]
+- `fork: "none"` в декларации с 2026-10-22: kimi ≥ 2.3.0 запрещает
+  кросс-процессный fork живой сессии; подробности — в
+  [инциденте](/incidents/2026-10-22-kimi-23-session-lock-breaks-fork.md).[^live-2022]
 - Git инициализирован 2026-10-20; работа коммитится поэтапно.[^repo-ls]
 - `.npmrc` разрешает install-скрипты `better-sqlite3`, `node-pty`,
   `@parcel/watcher` — иначе npm блокирует сборку нативных аддонов bb-app.
@@ -48,8 +52,14 @@ harness живут в корневом [AGENTS.md](../AGENTS.md) и вне эт�
 - Установка плагина в запущенный bb (`bb plugin install .`) и работа на
   enrolled-хосте не проверялись end-to-end: на момент проверки был доступен
   только CLI из `bb-app`, без запущенного сервера.
-- При апгрейде SDK перепроверить acp-next: если `/acp` и `/acp-next` сольются,
-  вернуть импорт на `/acp` и прогнать live-тесты.
+- SDK: 0.6.68 проверен 2026-10-22 — `/acp` и `/acp-next` всё ещё раздельные
+  entrypoints, и оба хардкодят `fork: "tip"` в initialize; апгрейд ничего
+  не даёт, остаёмся на 0.6.49. Перепроверить слияние entrypoints при
+  следующем апгрейде SDK.
+- Кандидаты в upstream-issue (не заведены): (1) MoonshotAI/kimi-code —
+  session lock ломает ACP `session/fork` живой сессии из другого процесса;
+  (2) get-bb/plugin-sdk — initialize моста заявляет `fork: "tip"` без
+  проверки агента, без диалектного хука сузить.
 
-[^repo-ls]: Наблюдение файловой системы и прогоны 2026-10-20
-[^live-conformance]: Live-проверки против реального kimi acp, 2026-10-20
+[^repo-ls]: Наблюдение файловой системы и прогоны тестов/сборки 2026-10-20
+[^live-2022]: Live-прогоны против kimi acp 2.3.0, 2026-10-22

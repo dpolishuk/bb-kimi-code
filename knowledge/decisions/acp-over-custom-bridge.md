@@ -48,7 +48,10 @@ sources:
   `@get-bb/plugin-sdk` 0.6.49–0.6.54).
 - Handshake generic ACP bridge: `fork: "tip"`, `approvalEnforcedBy: "runtime"`,
   `grammarVersions: [3, 3]`, `skills.configure: true` — поэтому декларация
-  заявляет `fork: "tip"` и все три permission modes.
+  заявляла `fork: "tip"` и все три permission modes. С 2026-10-22 fork сужен
+  до `none`: kimi 2.3.0 ввёл session lock, ломающий кросс-процессный fork
+  живой сессии — см. [инцидент](../incidents/2026-10-22-kimi-23-session-lock-breaks-fork.md);
+  handshake моста при этом продолжает репортить `fork: "tip"` (хардкод SDK).
 
 # Последствия
 
@@ -114,6 +117,35 @@ SDK зафиксирован в `host.ts`.
   CLI-фичи вне ACP.
 - **MCP** — работает через собственную конфигурацию kimi (`/mcp-config`,
   config.toml), bb им не управляет.
+
+# Аудит-дельта против kimi 2.3.0 (2026-10-22)
+
+Свежий handshake и `session/new` против живого 2.3.0; релиз-нот новых
+ACP-инструментов не содержат. Что изменилось против матрицы выше:
+
+- handshake: `sessionCapabilities` пополнились `additionalDirectories`
+  (соответствует CLI `--add-dir`), заявлены `mcpCapabilities {http, sse}` и
+  `auth: {logout}`; `configOptions` не изменились (model ×4, thinking
+  low/high/max, mode ×4).[^audit-23]
+- **fork** — см. [инцидент 2026-10-22](../incidents/2026-10-22-kimi-23-session-lock-breaks-fork.md):
+  multi-client session occupancy в 2.3.0 и есть тот лок; декларация `none`.
+- **`additionalDirectories`** — gap SDK-моста: bb→bridge протокол имеет
+  `additionalWorkspaceWriteRoots`, но мост шлёт агенту в `session/new` только
+  `cwd`+`mcpServers` и корни не пробрасывает. Плагином не чинится (нет хука в
+  setup сессии); практическое влияние не проверялось (нужен live multi-root
+  turn). Кандидат в upstream-issue к get-bb/plugin-sdk.[^audit-23]
+- **`auth.logout`** — kimi объявляет, SDK-клиент имеет request spec, но ни
+  мост, ни bb не имеют поверхности вызова: выйти из аккаунта kimi через bb
+  нельзя, только локально.[^audit-23]
+- **ACP `plan/update`** — мост мапит в bb plan-steps, но kimi их не эмитит
+  (в бинаре упоминаний нет): Plan-режим работает как mode, живого план-таймлайна
+  от kimi в bb нет — ограничение провайдера.[^audit-23]
+- **Сессии монопольны**: один kimi-session нельзя держать открытым
+  одновременно в живом bb-треде и в интерактивном kimi (`-S`/`--continue`) —
+  второй клиент получит occupancy-ошибку.[^incident-23]
+
+[^audit-23]: Свежие пробы handshake/session/new против kimi 2.3.0 и сверка с релиз-нотами, 2026-10-22
+[^incident-23]: Инцидент session lock, 2026-10-22
 
 [^kimi-readme]: MoonshotAI/kimi-code README
 [^kimi-acp-probe]: Локальный пробник kimi acp, 2026-10-20

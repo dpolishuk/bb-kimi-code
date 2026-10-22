@@ -39,8 +39,11 @@ picker maps onto kimi's thinking levels: Low / High / Max.
 
 - Video input is not available through ACP (the handshake advertises image
   only); audio is not supported by kimi itself.
-- Fork is supported at the session tip only (`fork: "tip"`); checkpoint forks
-  are rejected.
+- Fork is disabled (`fork: "none"`): kimi ≥ 2.3.0 locks each session to its
+  owning process, and bb forks by asking a new kimi process to fork the
+  still-live source session, which kimi rejects ("This session is in use by
+  another Kimi Code process"). Re-enable only when kimi allows cross-process
+  forks of live sessions.
 - Thread archive and rename are not mirrored into kimi sessions.
 - MCP servers come from kimi's own configuration (`/mcp-config`, config.toml),
   not from bb.
