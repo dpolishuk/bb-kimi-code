@@ -2,6 +2,21 @@
 
 ## 2026-10-23
 
+* **Release**: v0.2.2 — иконка приведена к брендингу Kimi по референсу из
+  треда: синяя точка уменьшена (r 1.75 → 1.05) и отделена от верхней диагонали
+  «K» (в v0.2.1 наползала и сливалась с ней в пятно), радиус углов 6 → 4,
+  штрихи 2.9 → 1.9. Проверка рендерами qlmanage на 512/32/16 px — читается на
+  всех размерах. Тесты 23/23, build зелёный; live bb обновлён in-place
+  (`kimi-code@0.2.2 running`).
+
+* **Update**: Проверка «все ли опции kimi поддержаны в bb» (скриншот пикера):
+  совпадение 1:1 тремя способами — live `model/list` через bridge,
+  `bb provider models kimi-code --json` и пикер bb. Зафиксирован дрейф
+  display-name (`kimi-for-coding` → «K2.8 Preview»), per-model лестницы
+  thinking (K3-класс low/high/max, highspeed on/high) и цепочка применения
+  уровня (`selectAcpNativeReasoning` → `session/set_config_option` verbatim,
+  неизвестное опускается). Подробности — в [решении об ACP](decisions/acp-over-custom-bridge.md).
+
 * **Release**: v0.2.1 — иконка плагина в стиле Kimi (чёрный скруглённый тайл,
   белая геометричная «K», синяя точка-акцент #3B5BFB по референсу из треда).
   Патч внутри `^0.2.0`: `bb plugin update kimi-code --yes` обновил живую

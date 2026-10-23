@@ -187,6 +187,31 @@ ACP-инструментов не содержат. Что изменилось 
   правкой `~/.kimi-code/config.toml`. bb-настройки плагина для пула нет —
   и не нужно: bb не владеет конфигом kimi.
 
+## Дельта по display-name и применению reasoning (2026-10-23, live-пробы)
+
+Ответ на вопрос «все ли опции kimi видны в bb» (пикер моделей пользователя):
+полное совпадение 1:1. Проверено тремя независимыми способами против kimi
+2.3.0: live `model/list` через bridge, `bb provider models kimi-code --json`
+(кэш bb-core) и скриншот пикера bb.
+
+- **Display-name дрейф kimi-стороны**: `kimi-for-coding` теперь отдаётся как
+  «K2.8 Preview» (id прежний); остальные — «K2.7 Code Highspeed», «K3»
+  (дефолт), «K3-256k». Имена приезжают из configOptions kimi, плагин их не
+  хардкодит — переименования подхватываются пробой автоматически.
+- **Per-model лестницы thinking**: K3-класс (kimi-for-coding, k3, k3-256k) —
+  low/high/max; `kimi-for-coding-highspeed` — тумблер on/high («Thinking On»).
+  Пикер bb рендерит probed-значения выбранной модели, поэтому у K3 видны
+  ровно Low/High/Max.
+- **Цепочка применения уровня**: bb принимает provider-specific id уровня
+  (`bb thread spawn --reasoning-level`: «id the model lists ... or a
+  provider-specific id»; `reasoningLevelSchema` — открытая строка). Мост
+  (`selectAcpNativeReasoning` в acp-next) шлёт `session/set_config_option`
+  со значением verbatim, если kimi сам его перечисляет
+  (`acpNativeReasoningLevelToValue`), и молча опускает неизвестное (так
+  «medium» остаётся no-op — kimi бежит на своём дефолте high).
+- **Mode-селектор** (default/plan/auto/yolo) живёт не в пикере моделей, а в
+  composer footer как session-option — тоже виден в `bb provider models`.
+
 [^swarm-dump]: Live-дамп provider-commands/session-options против kimi acp 2.3.0 (in-process bridge, thread/start без промпта), 2026-10-22; сверка с llms-full.txt moonshotai.github.io/kimi-code
 
 [^audit-23]: Свежие пробы handshake/session/new против kimi 2.3.0 и сверка с релиз-нотами, 2026-10-22
