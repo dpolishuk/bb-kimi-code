@@ -61,15 +61,22 @@ harness живут в корневом [AGENTS.md](../AGENTS.md) и вне эт�
 - Установка в живой bb проверена end-to-end 2026-10-23 через маркетплейс
   (remove старой `^0.1.0`-установки → `bb plugin install kimi-code` по
   каталогу `^0.2.0`); enrolled-хост по-прежнему не проверялся.
-- SDK: 0.6.68 проверен 2026-10-22 — `/acp` и `/acp-next` всё ещё раздельные
-  entrypoints, и оба хардкодят `fork: "tip"` в initialize; апгрейд ничего
-  не даёт, остаёмся на 0.6.49. Перепроверить слияние entrypoints при
-  следующем апгрейде SDK.
+- SDK: 0.6.68 проверен 2026-10-22, 0.6.73 (вышел 2026-10-23) проверен
+  2026-10-23 — `/acp` и `/acp-next` всё ещё раздельные entrypoints, оба
+  хардкодят `fork: "tip"` в initialize, throw на permission mode `auto` на
+  месте (buildAcpSessionParams + reconcileExecutionSettings), `session/new`
+  по-прежнему шлёт агенту только `{cwd, mcpServers}` без
+  `additionalDirectories`. Остаёмся на 0.6.49; обёртка fork в `host.ts`
+  нужна по-прежнему. Перепроверить слияние entrypoints при следующем
+  апгрейде SDK. Плюс в 0.6.73 диалект имеет `classifyToolCall`/`toolIdentity`
+  (и в нашем 0.6.49 тоже) — точка для delegation-отображения субагентов.
 - Кандидаты в upstream-issue (не заведены): (1) MoonshotAI/kimi-code —
   session lock ломает ACP `session/fork` живой сессии из другого процесса;
   (2) get-bb/plugin-sdk — initialize моста заявляет `fork: "tip"` без
   проверки агента, без диалектного хука сузить (плагин обходит обёрткой в
-  `host.ts`; кандидат в issue остаётся).
+  `host.ts`; кандидат в issue остаётся); (3) get-bb/plugin-sdk — мост не
+  пробрасывает `additionalWorkspaceWriteRoots` в `session/new`
+  (`additionalDirectories`), хотя ACP и kimi 2.3.0 это умеют.
 
 [^repo-ls]: Наблюдение файловой системы и прогоны тестов/сборки 2026-10-20
 [^live-2022]: Live-прогоны против kimi acp 2.3.0, 2026-10-22
