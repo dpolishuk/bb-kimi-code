@@ -2,9 +2,10 @@
 type: Incident
 title: "Декларация обещала permission mode auto, который ACP-мост отклоняет: thread.start падает"
 description: Тред на kimi-code с permission mode auto падает «Provider "Kimi Code" does not support permission mode "auto"» — SDK acp-next бросает на auto в двух местах, а декларация плагина заявляла все три режима; сужено до accept-edits/full, как у встроенных ACP-провайдеров bb.
-status: draft
+status: stable
 tags: [bb, kimi, incident, permission-mode, acp]
 generated: { by: kimi-code/k3, at: "2026-10-23T12:55:00Z" }
+verified: { by: kimi-code/k3, at: "2026-10-23T13:00:00Z" }
 sources:
   - id: thread-error
     resource: bb thread messages thr_v5fvsnn7m6, 2026-10-23
@@ -57,5 +58,9 @@ provider-acp-next в bb.app), и они декларируют ровно
 # Верификация
 
 - Юнит: 24/24, `tsc` чист (RED показывал 2 падения до фикса).
-- Live: после релиза v0.2.3 — тред на kimi-code без `--permission-mode`
-  (дефолт композера) и с `--permission-mode full` стартуют и завершают turn.
+- Live против v0.2.3 (`kimi-code@0.2.3 running`, 2026-10-23): тред без
+  `--permission-mode` (путь дефолта композера) — turn завершён, файл создан
+  (thr_8jvc42i7u7); тред с `--permission-mode full` — turn завершён
+  (thr_v8xdurr2we); `--permission-mode auto` отклоняется на создании:
+  `HTTP 400: Provider kimi-code only supports accept-edits, full permission
+  mode.` Демо-треды заархивированы.

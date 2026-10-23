@@ -2,6 +2,15 @@
 
 ## 2026-10-23
 
+* **Fix**: v0.2.3 — декларация больше не обещает permission mode `auto`:
+  SDK acp-next бросает на нём в `buildAcpSessionParams` и
+  `reconcileExecutionSettings`, а bb валидировал по декларации и диспатчил
+  тред в бросок («Provider "Kimi Code" does not support permission mode
+  "auto"», thread.start). Сужено до `["accept-edits", "full"]` по прецеденту
+  встроенных ACP-провайдеров bb; пин в server.test.ts (RED→GREEN). Live:
+  дефолтный тред и `full` работают, `auto` отклоняется на создании с HTTP 400.
+  Подробности — в [инциденте](incidents/2026-10-23-acp-bridge-rejects-auto-mode.md).
+
 * **Release**: v0.2.2 — иконка приведена к брендингу Kimi по референсу из
   треда: синяя точка уменьшена (r 1.75 → 1.05) и отделена от верхней диагонали
   «K» (в v0.2.1 наползала и сливалась с ней в пятно), радиус углов 6 → 4,
