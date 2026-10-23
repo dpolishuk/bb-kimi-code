@@ -1,7 +1,7 @@
 ---
 type: Incident
 title: "kimi 2.3.0 сломал fork в bb: session lock запрещает кросс-процессный fork живой сессии"
-description: Почему thread fork для kimi-code перестал работать и в conformance, и вживую — kimi 2.3.0 держит эксклюзивный лок сессии на процесс, а bb форкает новым процессом; декларация сужена до fork none, исход правила запинован в live-тесте.
+description: Почему thread fork для kimi-code перестал работать и в conformance, и вживую — kimi 2.3.0 держит эксклюзивный лок сессии на процесс, а bb форкает новым процессом; декларация и bridge handshake сужены до fork none, fork-правило исключено из conformance.
 status: stable
 tags: [bb, kimi, incident, fork, session-lock, acp]
 generated: { by: zcode, at: "2026-10-22T19:35:00Z" }
@@ -66,21 +66,25 @@ fork живого треда всегда падает. Это не только
 
 # Фикс (плагин не может починить fork — только перестать его обещать)
 
-- `server.ts`: `fork: "none"` + комментарий с причиной. Эффективная
-  capability bb = декларация ∩ handshake, так что UI больше не предлагает
-  сломанный fork.
-- `kimi-live.conformance.test.ts`: вместо `report.passed` тест запинивает
-  текущую истину — всё зелёное, кроме `session/fork-identity`, который обязан
-  упасть с SESSION_OCCUPIED. Когда пин сломается (kimi ослабит лок или SDK
-  перестанет перезаявлять fork) — вернуть `fork: "tip"` и `report.passed`.
+- `server.ts`: `fork: "none"` + комментарий с причиной.
+- `host.ts`: обёртка `narrowInitializeForkOnBridge` (`src/handshake-fork.ts`)
+  переписывает `fork: "tip"` → `"none"` в initialize-ответе — SDK хардкодит
+  claim, не спрашивая агента. Handshake больше не расходится с декларацией;
+  узкий пин — юнит-тест в `host.test.ts` (TDD: RED на `"tip"`, GREEN на
+  адаптере).
+- `kimi-live.conformance.test.ts`: запинивает текущую истину — с `fork:
+  "none"` в handshake kit вообще исключает правило `session/fork-identity`
+  из набора; остальные правила зелёные (live 2026-10-22). Когда пин сломается
+  с зелёным fork-правилом (kimi ослабит лок) — вернуть `fork: "tip"` в
+  `server.ts`, снять обёртку и вернуться к `report.passed`.
 - `kimi-live.maintenance.test.ts`: точный пин версии заменён на semver-паттерн
   (CLI самообновляется молча).
 - Тексты (README, PLUGIN_OVERVIEW, SKILL.md) больше не обещают fork.
 
-Известная вынужденная расходимость: bridge продолжает репортить `fork: "tip"`
-(хардкод SDK), декларация сужает до `none` — направление «декларация уже
-handshake» допустимо (факты только сужают), но само узкое место — кандидат в
-issue к get-bb/plugin-sdk (мост заявляет capability, не проверяя агента).
+Остаточное: расходимости handshake↔декларации больше нет (обёртка), но причина
+на месте — initialize SDK хардкодит `fork: "tip"` без проверки агента и без
+хука сужения; кандидат в issue к get-bb/plugin-sdk (обёртка — обход, не фикс
+апстрима).
 
 # Урок
 

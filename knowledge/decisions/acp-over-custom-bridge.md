@@ -59,7 +59,7 @@ sources:
   заявляла `fork: "tip"` и все три permission modes. С 2026-10-22 fork сужен
   до `none`: kimi 2.3.0 ввёл session lock, ломающий кросс-процессный fork
   живой сессии — см. [инцидент](../incidents/2026-10-22-kimi-23-session-lock-breaks-fork.md);
-  handshake моста при этом продолжает репортить `fork: "tip"` (хардкод SDK).
+  handshake моста при этом сужен до `none` обёрткой в `host.ts` (SDK хардкодит `"tip"`).
 
 # Последствия
 
@@ -136,7 +136,8 @@ ACP-инструментов не содержат. Что изменилось 
   `auth: {logout}`; `configOptions` не изменились (model ×4, thinking
   low/high/max, mode ×4).[^audit-23]
 - **fork** — см. [инцидент 2026-10-22](../incidents/2026-10-22-kimi-23-session-lock-breaks-fork.md):
-  multi-client session occupancy в 2.3.0 и есть тот лок; декларация `none`.
+  multi-client session occupancy в 2.3.0 и есть тот лок; декларация и (с
+  2026-10-22, обёртка в `host.ts`) handshake — `none`.
 - **`additionalDirectories`** — gap SDK-моста: bb→bridge протокол имеет
   `additionalWorkspaceWriteRoots`, но мост шлёт агенту в `session/new` только
   `cwd`+`mcpServers` и корни не пробрасывает. Плагином не чинится (нет хука в

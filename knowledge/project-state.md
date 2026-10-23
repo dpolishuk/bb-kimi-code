@@ -26,14 +26,16 @@ sources:
   Покрытие возможностей: [решение об ACP](/decisions/acp-over-custom-bridge.md).[^repo-ls]
 - Bridge — `@get-bb/plugin-sdk/provider-bridge/acp-next` (см. риск deprecated
   alias в `host.ts` и в решении).[^repo-ls]
-- Проверки зелёные (2026-10-22, kimi CLI 2.3.0): `vitest run` — 22/22 юнит;
+- Проверки зелёные (2026-10-22, kimi CLI 2.3.0): `vitest run` — 23/23 юнит;
   `tsc --noEmit` чист; `bb plugin build` собирает `dist/server.js` +
-  `dist/host.js` (SDK 0.6.49, bb 0.46.1). Live: conformance — все правила,
-  кроме `session/fork-identity`, который [запинован как ожидаемо красный](/incidents/2026-10-22-kimi-23-session-lock-breaks-fork.md)
-  (session lock kimi 2.3.0); session-state, maintenance (health ready, без
+  `dist/host.js` (SDK 0.6.49, bb 0.46.1). Live: conformance — все правила;
+  `session/fork-identity` kit исключает сам из-за суженного до `none`
+  handshake ([инцидент](/incidents/2026-10-22-kimi-23-session-lock-breaks-fork.md),
+  session lock kimi 2.3.0); session-state, maintenance (health ready, без
   пина точной версии), models, tools.[^live-2022]
-- `fork: "none"` в декларации с 2026-10-22: kimi ≥ 2.3.0 запрещает
-  кросс-процессный fork живой сессии; подробности — в
+- `fork: "none"` в декларации и в bridge handshake с 2026-10-22 (обёртка
+  `narrowInitializeForkOnBridge` в `host.ts`, SDK хардкодит `"tip"`): kimi
+  ≥ 2.3.0 запрещает кросс-процессный fork живой сессии; подробности — в
   [инциденте](/incidents/2026-10-22-kimi-23-session-lock-breaks-fork.md).[^live-2022]
 - Git инициализирован 2026-10-20; работа коммитится поэтапно.[^repo-ls]
 - `.npmrc` разрешает install-скрипты `better-sqlite3`, `node-pty`,
@@ -59,7 +61,8 @@ harness живут в корневом [AGENTS.md](../AGENTS.md) и вне эт�
 - Кандидаты в upstream-issue (не заведены): (1) MoonshotAI/kimi-code —
   session lock ломает ACP `session/fork` живой сессии из другого процесса;
   (2) get-bb/plugin-sdk — initialize моста заявляет `fork: "tip"` без
-  проверки агента, без диалектного хука сузить.
+  проверки агента, без диалектного хука сузить (плагин обходит обёрткой в
+  `host.ts`; кандидат в issue остаётся).
 
 [^repo-ls]: Наблюдение файловой системы и прогоны тестов/сборки 2026-10-20
 [^live-2022]: Live-прогоны против kimi acp 2.3.0, 2026-10-22

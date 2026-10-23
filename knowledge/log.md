@@ -2,6 +2,16 @@
 
 ## 2026-10-22
 
+* **Update**: Codex-ревью PR #1 поднял P1: handshake моста заявлял `fork:
+  "tip"` (хардкод SDK) против декларации `none`. По TDD добавлена обёртка
+  `narrowInitializeForkOnBridge` (`src/handshake-fork.ts`, `host.ts`):
+  переписывает `fork` в initialize-ответе; conformance-kit теперь сам
+  исключает `session/fork-identity` — пин live-теста переписан под это
+  (правило отсутствует, остальные зелёные). Юнит 23/23, tsc, build, live
+  (conformance, session-state, models, maintenance) зелёные. Подробности — в
+  [инциденте](incidents/2026-10-22-kimi-23-session-lock-breaks-fork.md) и
+  [решении об ACP](decisions/acp-over-custom-bridge.md).
+
 * **Update**: Аудит-дельта покрытия против kimi 2.3.0 (свежие пробы handshake/
   session/new + релиз-ноты) — в [решении об ACP](decisions/acp-over-custom-bridge.md):
   новых ACP-инструментов нет; handshake добавил `additionalDirectories`
