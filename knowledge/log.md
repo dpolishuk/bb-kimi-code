@@ -2,6 +2,18 @@
 
 ## 2026-10-23
 
+* **Submit**: плагин отправлен в bb-community marketplace —
+  [get-bb/marketplace#651](https://github.com/get-bb/marketplace/pull/651)
+  (ветка `submit-kimi-code` в форке dpolishuk/marketplace, один коммит:
+  entry + иконка PNG 541a21b8 + 2 скриншота + overview из PLUGIN_OVERVIEW.md).
+  Источник entry: git range `^0.2.0` (резолвится в v0.2.3 @ 73ce5a4).
+  Проверки: marketplace build/check/gate:v1/test зелёные; плагин — 24/24,
+  tsc, build, live-сьют. Скриншоты сняты desktop-автоматизацией локального UI
+  (127.0.0.1:38886) через `p.screenshot({path})` в обход лимита 960px —
+  bounded-шоты CLI для маркетплейса не подходят (мин. 1200px).
+  Урок: build маркетплейса требует full git history (`git fetch --unshallow`)
+  и закоммиченный entry (дату publishedAt берёт из истории).
+
 * **Fix**: v0.2.3 — декларация больше не обещает permission mode `auto`:
   SDK acp-next бросает на нём в `buildAcpSessionParams` и
   `reconcileExecutionSettings`, а bb валидировал по декларации и диспатчил
