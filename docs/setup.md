@@ -109,6 +109,7 @@ bb settings general defaultProviderId kimi-code
 | Provider missing from the picker | `bb plugin list` — the plugin must be loaded; reinstall with `bb plugin install ./bb-kimi-code` |
 | Model list is empty | the first `model/list` probe may need a few seconds; it also requires a signed-in `kimi` |
 | Plugin changes not picked up | `bb plugin reload kimi-code` |
+| A new Kimi model is missing from the picker | kimi CLI auto-updated and bb's cached catalog is stale: `bb provider disable kimi-code && bb provider enable kimi-code` forces a fresh probe |
 
 ## For contributors
 

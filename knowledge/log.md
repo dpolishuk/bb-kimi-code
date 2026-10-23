@@ -2,6 +2,16 @@
 
 ## 2026-10-23
 
+* **Fix/Runbook**: kimi 2.3.0 → 2.3.1 (снова тихий авто-апдейт) добавил модели
+  K3.1 Pro / K3.1 Pro Highspeed в ACP configOptions, но в bb их не было: bb
+  кэширует каталог моделей провайдера per-host по fingerprint = digest бандла
+  плагина (таблица `provider_model_catalogs` в bb.db), а смена CLI кэш не
+  инвалидирует; `bb plugin reload` — тоже не перепробирует. Рецепт:
+  `bb provider disable kimi-code && bb provider enable kimi-code` → свежая
+  проба, обе модели появились (проверено `bb provider models`). Ограничение
+  на стороне bb core, плагином не чинится; записано в troubleshooting
+  docs/setup.md. Канарейка это не ловит (models-тест пинит только лестницу K3).
+
 * **Update**: v0.2.8 — `@get-bb/plugin-sdk` 0.6.49 → 0.6.73. Gap'ы на месте
   (fork-хардкод, auto-throw, additionalDirectories — последний закрывает наш
   PR get-bb/bb#6180), апгрейд ради общих фиксов. Unit 32/32, live 40/40,
