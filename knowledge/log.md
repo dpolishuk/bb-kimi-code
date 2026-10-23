@@ -2,6 +2,15 @@
 
 ## 2026-10-23
 
+* **Update**: Баннер README переработан под бренд Kimi (assets/banner.svg,
+  1280×640 + экспорт banner.png для social preview): чёрный тайл с белой «K»
+  и синей точкой, заголовок «Kimi Code for bb», три колонки — Use it
+  (установка, маркетплейс, пикер), How it works (декларация, host-артефакт,
+  `kimi acp` по stdio, live-пробы configOptions, permission modes) и Design
+  ideas (ACP-кит вместо своего bridge, честная декларация, ничего не
+  захардкожено, диалект maintenance, TDD). Рендер для сверки — `rsvg-convert`
+  (qlmanage криво масштабирует SVG).
+
 * **Submit**: плагин отправлен в bb-community marketplace —
   [get-bb/marketplace#651](https://github.com/get-bb/marketplace/pull/651)
   (ветка `submit-kimi-code` в форке dpolishuk/marketplace, один коммит:
