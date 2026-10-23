@@ -27,6 +27,10 @@ sources:
     resource: knowledge/incidents/2026-10-22-kimi-23-session-lock-breaks-fork.md
     title: Инцидент session lock kimi 2.3.0 (fork живой сессии)
     author: zcode
+  - id: swarm-dump
+    resource: Live-дамп bb/provider-commands и bb/session-options через bridge против kimi acp 2.3.0 (thread/start без промпта), 2026-10-22; сверка с llms-full.txt moonshotai.github.io/kimi-code
+    title: Полный список публикуемых команд и опций kimi acp 2.3.0
+    author: zcode
 ---
 
 # Решение
@@ -178,7 +182,7 @@ ACP-инструментов не содержат. Что изменилось 
 - **Secondary model** (`[secondary_model]` / пул `[secondary_model.models]`,
   stable с 2.2.x) — конфигурация config.toml kimi, через ACP не управляется
   (`/secondary-model` в дампе команд отсутствует). Работает прозрачно
-  kimi-стороны: пул даёт тула́м `Agent`/`AgentSwarm` параметр `model`;
+  kimi-стороны: пул даёт тулам `Agent`/`AgentSwarm` параметр `model`;
   настроить из bb-треда можно командой `update-config` (публикуется) или
   правкой `~/.kimi-code/config.toml`. bb-настройки плагина для пула нет —
   и не нужно: bb не владеет конфигом kimi.
