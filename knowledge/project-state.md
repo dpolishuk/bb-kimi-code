@@ -38,6 +38,13 @@ sources:
   ≥ 2.3.0 запрещает кросс-процессный fork живой сессии; подробности — в
   [инциденте](/incidents/2026-10-22-kimi-23-session-lock-breaks-fork.md).[^live-2022]
 - Git инициализирован 2026-10-20; работа коммитится поэтапно.[^repo-ls]
+- Релиз **v0.2.0** (2026-10-23, tag на `b2dd99e`): fork `none` в декларации
+  и handshake, knowledge по swarm/secondary model. Каталог `marketplace.json`
+  поднят до `^0.2.0` — под semver caret-диапазон с базой 0.x минорные релизы
+  не попадают (`^0.1.0` ≠ 0.2.0), правило зафиксировано в
+  [docs/marketplace.md](../docs/marketplace.md). Плагин установлен в живой bb
+  из маркетплейса: `kimi-code@0.2.0 running`, source
+  `git:…@semver:^0.2.0`, `bb provider models kimi-code` отдаёт каталог.[^live-2022]
 - `.npmrc` разрешает install-скрипты `better-sqlite3`, `node-pty`,
   `@parcel/watcher` — иначе npm блокирует сборку нативных аддонов bb-app.
 - `.serena/` — стандартная конфигурация Serena; содержимое
@@ -51,9 +58,9 @@ harness живут в корневом [AGENTS.md](../AGENTS.md) и вне эт�
 
 # Открытые вопросы
 
-- Установка плагина в запущенный bb (`bb plugin install .`) и работа на
-  enrolled-хосте не проверялись end-to-end: на момент проверки был доступен
-  только CLI из `bb-app`, без запущенного сервера.
+- Установка в живой bb проверена end-to-end 2026-10-23 через маркетплейс
+  (remove старой `^0.1.0`-установки → `bb plugin install kimi-code` по
+  каталогу `^0.2.0`); enrolled-хост по-прежнему не проверялся.
 - SDK: 0.6.68 проверен 2026-10-22 — `/acp` и `/acp-next` всё ещё раздельные
   entrypoints, и оба хардкодят `fork: "tip"` в initialize; апгрейд ничего
   не даёт, остаёмся на 0.6.49. Перепроверить слияние entrypoints при

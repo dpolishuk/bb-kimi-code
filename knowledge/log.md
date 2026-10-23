@@ -1,5 +1,14 @@
 # Directory Update Log
 
+## 2026-10-23
+
+* **Release**: v0.2.0 — PR #1 смёржен (rebase), версия поднята, тег на
+  `b2dd99e`, каталог `^0.1.0`→`^0.2.0` (0.x-caret не пускает минорные бампы —
+  правило в [docs/marketplace.md](../docs/marketplace.md)). Установлено в
+  живой bb из маркетплейса (`kimi-code@0.2.0` running, `bb provider models`
+  зелёный); старая установка требовала remove перед install из нового range.
+  Подробности — в [состоянии репозитория](project-state.md).
+
 ## 2026-10-22
 
 * **Update**: Аудит swarm и secondary model против kimi 2.3.0 (live-дамп
