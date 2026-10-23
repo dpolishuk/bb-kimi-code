@@ -31,9 +31,9 @@ picker maps onto kimi's thinking levels: Low / High / Max.
 - kimi's mode selector (Default / Plan / Auto / YOLO) is published as the
   session's `mode` option and sits in the composer footer; pick Plan there
   for read-only planning.
-- bb's own permission modes still gate approvals on top:
-  `accept-edits` auto-approves file edits, `auto` adds commands and tool
-  calls, `full` approves everything.
+- bb's own permission modes still gate approvals on top: `accept-edits`
+  auto-approves workspace file edits, `full` approves everything. bb's
+  `auto` mode is not offered — the ACP bridge cannot enforce it.
 
 ## Limits
 

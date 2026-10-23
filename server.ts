@@ -32,7 +32,12 @@ export default function plugin(bb: BbPluginApi) {
       supportsManualCompaction: true,
       supportsThreadArchive: false,
       supportsThreadRename: false,
-      permissionModes: ["accept-edits", "auto", "full"],
+      // The SDK ACP bridge throws on bb's "auto" mode (buildAcpSessionParams /
+      // reconcileExecutionSettings): ACP has no equivalent for bb's
+      // auto-reviewer, so the bridge enforces only accept-edits (workspace
+      // write roots) and full. bb's builtin ACP provider plugins declare the
+      // same pair. Declaring "auto" sent threads straight into that throw.
+      permissionModes: ["accept-edits", "full"],
       // bb starts new threads at "medium" by default and validates the level
       // against this ladder. kimi only knows low/high/max, so "medium" is
       // declared but maps to nothing kimi-side: the bridge omits it and kimi

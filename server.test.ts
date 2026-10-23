@@ -31,7 +31,7 @@ describe("the kimi-code provider declaration", () => {
       supportsManualCompaction: true,
       supportsThreadArchive: false,
       supportsThreadRename: false,
-      permissionModes: ["accept-edits", "auto", "full"],
+      permissionModes: ["accept-edits", "full"],
       reasoningLevels: ["low", "medium", "high", "max"],
     });
   });
@@ -44,6 +44,21 @@ describe("the kimi-code provider declaration", () => {
     // after the owner process exits, which bb's fork flow never guarantees,
     // so the declaration must not offer fork.
     expect(registeredDeclaration().capabilities.fork).toBe("none");
+  });
+
+  it("declares only the permission modes the ACP bridge can enforce", () => {
+    // The SDK ACP bridge throws on bb's "auto" mode ("Provider ... does not
+    // support permission mode \"auto\"" in buildAcpSessionParams, and again
+    // in reconcileExecutionSettings): ACP has no equivalent for bb's
+    // auto-reviewer, and the bridge enforces only accept-edits (workspace
+    // write roots) and full (approve everything) itself. bb's own builtin
+    // ACP provider plugins declare the same pair. Declaring "auto" let bb
+    // dispatch threads straight into that throw (thread thr_v5fvsnn7m6,
+    // 2026-10-23), so the declaration must not offer it.
+    expect(registeredDeclaration().capabilities.permissionModes).toEqual([
+      "accept-edits",
+      "full",
+    ]);
   });
 
   it("declares the reasoning ladder with bb's default medium level", () => {

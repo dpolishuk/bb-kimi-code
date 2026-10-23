@@ -31,3 +31,4 @@ okf_version: "0.2"
 
 * [Shadowing бинаря kimi: «Thinking On» вместо уровней](incidents/2026-10-20-shadowed-kimi-binary.md) — bb daemon запускал старый kimi-cli 0.23.5 из Homebrew вместо Kimi Code 2.x; диагностика через bb.db и пробы.
 * [kimi 2.3.0 сломал fork: session lock запрещает кросс-процессный fork живой сессии](incidents/2026-10-22-kimi-23-session-lock-breaks-fork.md) — эксклюзивный лок сессии на процесс против модели fork'а bb новым процессом; декларация сужена до `fork: "none"`, исход правила запинован в live-тесте.
+* [Permission mode auto отклоняется ACP-мостом](incidents/2026-10-23-acp-bridge-rejects-auto-mode.md) — SDK acp-next бросает на bb-режиме `auto`, а декларация его обещала; сужено до `["accept-edits", "full"]` по прецеденту встроенных ACP-провайдеров bb.

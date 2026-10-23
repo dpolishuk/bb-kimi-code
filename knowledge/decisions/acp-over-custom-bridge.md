@@ -64,6 +64,9 @@ sources:
   до `none`: kimi 2.3.0 ввёл session lock, ломающий кросс-процессный fork
   живой сессии — см. [инцидент](../incidents/2026-10-22-kimi-23-session-lock-breaks-fork.md);
   handshake моста при этом сужен до `none` обёрткой в `host.ts` (SDK хардкодит `"tip"`).
+  С 2026-10-23 permission modes сужены до `["accept-edits", "full"]`: SDK-мост
+  бросает на bb-режиме `auto` — см.
+  [инцидент](../incidents/2026-10-23-acp-bridge-rejects-auto-mode.md).
 
 # Последствия
 
@@ -114,7 +117,8 @@ SDK зафиксирован в `host.ts`.
   (live: `provider/installation/status` для отсутствующего бинаря);
 - sign-in статус: OAuth-файл или api_key в config.toml → health `ready`
   (live); JWT kimi не содержит email — email всегда null;
-- image-ввод, embedded context; permission modes enforce'ит runtime.
+- image-ввод, embedded context; approvals внутри turn'а enforce'ит runtime
+  (режимы `accept-edits`/`full`; `auto` мост отклоняет — см. инцидент 2026-10-23).
 
 Не поддерживается (вердикт с основаниями):
 

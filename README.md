@@ -43,8 +43,8 @@ Everything Kimi Code exposes over ACP works in bb:
   from Kimi Code's `mode` session option.
 - **Slash commands** — `/compact`, `/status`, `/usage`, your skill commands:
   published into bb's composer menu from the live session.
-- **Approvals** — gated by bb permission modes (`accept-edits`, `auto`,
-  `full`); Kimi Code's AskUserQuestion arrives as an approval with options.
+- **Approvals** — gated by bb permission modes (`accept-edits`, `full`);
+  Kimi Code's AskUserQuestion arrives as an approval with options.
 - **Subagents** — Kimi Code's `Agent` tool calls appear on the timeline.
 - **Image input** — local images are sent as ACP image blocks.
 - **Skills** — `.kimi-code/skills` and `.agents/skills` are discovered for
