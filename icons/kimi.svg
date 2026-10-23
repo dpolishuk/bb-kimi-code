@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24">
   <!-- bb renders provider logos as currentColor masks: one paint only, and
        the K plus the dot are evenodd cutouts in the tile silhouette. -->
-  <path fill="#000000" fill-rule="evenodd" d="M5 1 h14 a4 4 0 0 1 4 4 v14 a4 4 0 0 1 -4 4 H5 a4 4 0 0 1 -4 -4 V5 a4 4 0 0 1 4 -4 Z M6.1 6.2 h2.4 v11.6 h-2.4 Z M8.5 10.55 L14.9 6.3 L14.9 8.7 L8.5 12.95 Z M8.5 13.1 L13.7 17.8 L16.1 17.8 L8.5 14.9 Z M15.75 6.6 a1.15 1.15 0 1 0 2.3 0 a1.15 1.15 0 1 0 -2.3 0 Z"/>
+  <path fill="#000000" fill-rule="evenodd" d="M5 1 h14 a4 4 0 0 1 4 4 v14 a4 4 0 0 1 -4 4 H5 a4 4 0 0 1 -4 -4 V5 a4 4 0 0 1 4 -4 Z M5.9 6 h2.8 v12 h-2.8 Z M8.7 10.3 L15.1 6.1 L15.1 8.9 L8.7 13.1 Z M8.7 13.3 L13.5 18 L16.3 18 L8.7 15.1 Z M15.9 6.4 a1.2 1.2 0 1 0 2.4 0 a1.2 1.2 0 1 0 -2.4 0 Z"/>
 </svg>
