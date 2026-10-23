@@ -2,6 +2,26 @@
 
 ## 2026-10-23
 
+* **Feature**: v0.2.7 — субагенты kimi (инструмент `Agent`) отображаются
+  delegation-строками вместо generic tool: `classifyToolCall` в диалекте
+  (прецеденты grok/cursor в SDK; `childRef` = toolCallId, label из
+  `rawInput.description`, detail = тип субагента из «Launching <type>
+  agent: ...»). Шейпы запинены в `dialect.test.ts` по записи
+  `BB_PROVIDER_BRIDGE_RECORD_DIR`, end-to-end — новый live-тест
+  `kimi-live.delegation.test.ts`. `AgentSwarm` не пробирован, остаётся
+  generic.
+* **Upstream**: PR [get-bb/bb#6180](https://github.com/get-bb/bb/pull/6180) —
+  проброс `additionalWorkspaceWriteRoots` как `additionalDirectories` в
+  `session/new`/`load`/`resume`/`fork` (гейт на capability). Тесты
+  RED→GREEN (537/537 + typecheck + lint), заодно починен stale-roots при
+  смене настроек живой сессии. PR автоматически закрыт contributor-гейтом
+  (dpolishuk не в APPROVED_CONTRIBUTORS) — реопен после одобрения через
+  Discord #contributors.
+* **Вердикты проб ошибок kimi 2.3.0** (в [решении об ACP](decisions/acp-over-custom-bridge.md)):
+  auth `-32000` мапится SDK в typed `authRequired` + подсказка `kimi login`;
+  occupancy `-32603` без типизации (текст в `data.details`, SDK его доносит)
+  — typed hint невозможен без поддержки kimi, текст-матчинг запрещён.
+
 * **Merge**: PR [get-bb/marketplace#651](https://github.com/get-bb/marketplace/pull/651)
   смёржен (approve от SawyerHood, 2026-10-23T14:04:58Z, merge `02708706`) —
   kimi-code опубликован в bb-community каталоге. Источник entry — range
