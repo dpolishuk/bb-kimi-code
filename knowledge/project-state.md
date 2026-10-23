@@ -61,15 +61,12 @@ harness живут в корневом [AGENTS.md](../AGENTS.md) и вне эт�
 - Установка в живой bb проверена end-to-end 2026-10-23 через маркетплейс
   (remove старой `^0.1.0`-установки → `bb plugin install kimi-code` по
   каталогу `^0.2.0`); enrolled-хост по-прежнему не проверялся.
-- SDK: 0.6.68 проверен 2026-10-22, 0.6.73 (вышел 2026-10-23) проверен
-  2026-10-23 — `/acp` и `/acp-next` всё ещё раздельные entrypoints, оба
-  хардкодят `fork: "tip"` в initialize, throw на permission mode `auto` на
-  месте (buildAcpSessionParams + reconcileExecutionSettings), `session/new`
-  по-прежнему шлёт агенту только `{cwd, mcpServers}` без
-  `additionalDirectories`. Остаёмся на 0.6.49; обёртка fork в `host.ts`
-  нужна по-прежнему. Перепроверить слияние entrypoints при следующем
-  апгрейде SDK. Плюс в 0.6.73 диалект имеет `classifyToolCall`/`toolIdentity`
-  (и в нашем 0.6.49 тоже) — точка для delegation-отображения субагентов.
+- SDK: обновлено 0.6.49 → 0.6.73 (v0.2.8, 2026-10-23): `/acp` и `/acp-next`
+  всё ещё раздельные, `fork: "tip"` хардкодится, throw на `auto` на месте,
+  `additionalDirectories` не пробрасывается (наш PR get-bb/bb#6180) — но
+  общие фиксы забраны; unit 32/32, live 40/40 зелёные. Обёртка fork в
+  `host.ts` нужна по-прежнему. Перепроверять слияние entrypoints при
+  следующих апгрейдах SDK.
 - Кандидаты в upstream-issue (не заведены): (1) MoonshotAI/kimi-code —
   session lock ломает ACP `session/fork` живой сессии из другого процесса;
   (2) get-bb/plugin-sdk — initialize моста заявляет `fork: "tip"` без

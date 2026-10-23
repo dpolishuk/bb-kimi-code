@@ -2,6 +2,16 @@
 
 ## 2026-10-23
 
+* **Update**: v0.2.8 — `@get-bb/plugin-sdk` 0.6.49 → 0.6.73. Gap'ы на месте
+  (fork-хардкод, auto-throw, additionalDirectories — последний закрывает наш
+  PR get-bb/bb#6180), апгрейд ради общих фиксов. Unit 32/32, live 40/40,
+  build зелёный; обёртка fork в host.ts нужна по-прежнему.
+* **Ops**: канарейка совместимости — bb-автоматизация `auto_e74usnxrvi4`
+  (проект bb-kimi-code): ежедневно 07:17 Europe/Moscow гоняет полный
+  live-сьют (`BB_KIMI_LIVE=1 npx vitest run`); тихий тик при зелёном,
+  при падении печатает хвост вывода. Ручной прогон `arun_8rd-xymixkg`
+  зелёный (exit 0, silent). Урок тихого авто-апдейта kimi 2.2.0→2.3.0.
+
 * **Feature**: v0.2.7 — субагенты kimi (инструмент `Agent`) отображаются
   delegation-строками вместо generic tool: `classifyToolCall` в диалекте
   (прецеденты grok/cursor в SDK; `childRef` = toolCallId, label из
