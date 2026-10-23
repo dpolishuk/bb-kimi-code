@@ -32,11 +32,13 @@
   generic.
 * **Upstream**: PR [get-bb/bb#6180](https://github.com/get-bb/bb/pull/6180) —
   проброс `additionalWorkspaceWriteRoots` как `additionalDirectories` в
-  `session/new`/`load`/`resume`/`fork` (гейт на capability). Тесты
-  RED→GREEN (537/537 + typecheck + lint), заодно починен stale-roots при
-  смене настроек живой сессии. PR автоматически закрыт contributor-гейтом
-  (dpolishuk не в APPROVED_CONTRIBUTORS) — реопен после одобрения через
-  Discord #contributors.
+  `session/new`/`load`/`resume`/`fork` (гейт на capability). Покрытие добито
+  по их AGENTS.md («one contract test table on every surface»): table-driven
+  тесты на fork/load/resume + тест обновления корней при смене настроек живой
+  сессии (CLI-выбор модели форсит restart). Mutation check: удаление проброса
+  роняет соответствующие тесты. Полный turbo 541/541 + typecheck + lint,
+  коммит `3572d27`, PR body обновлён. PR автоматически закрыт
+  contributor-гейтом — реопен после одобрения через Discord #contributors.
 * **Вердикты проб ошибок kimi 2.3.0** (в [решении об ACP](decisions/acp-over-custom-bridge.md)):
   auth `-32000` мапится SDK в typed `authRequired` + подсказка `kimi login`;
   occupancy `-32603` без типизации (текст в `data.details`, SDK его доносит)
