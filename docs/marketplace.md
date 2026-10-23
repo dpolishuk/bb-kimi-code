@@ -22,11 +22,11 @@ Useful commands:
 ```
 bb marketplace refresh kimi-code     # re-read the catalog and icons
 bb plugin outdated                   # see newer compatible releases
-bb plugin update kimi-code           # move to the latest release in ^0.1.0
+bb plugin update kimi-code           # move to the latest release in ^0.2.0
 bb marketplace remove kimi-code      # forget the catalog; installed plugins stay
 ```
 
-The catalog entry installs the highest `vX.Y.Z` tag matching `^0.1.0`, and
+The catalog entry installs the highest `vX.Y.Z` tag matching `^0.2.0`, and
 `bb plugin update` tracks later releases in that range.
 
 ### Direct install instead
@@ -35,7 +35,7 @@ No marketplace needed if you prefer:
 
 ```
 bb plugin install https://github.com/dpolishuk/bb-kimi-code
-bb plugin install git:https://github.com/dpolishuk/bb-kimi-code.git@^0.1.0
+bb plugin install git:https://github.com/dpolishuk/bb-kimi-code.git@^0.2.0
 ```
 
 A bare URL tracks the default branch; the `git:` range form tracks releases.
@@ -52,9 +52,11 @@ A bare URL tracks the default branch; the `git:` range form tracks releases.
    git push origin main --tags
    ```
 
-4. Done — the `range: "^0.1.0"` entry resolves the highest matching tag on
+4. Done — the `range: "^0.2.0"` entry resolves the highest matching tag on
    the next `bb marketplace refresh` / `bb plugin outdated`. No catalog edit
-   is needed for releases inside the range.
+   is needed for releases inside the range. Note: under semver a caret range
+   with a 0.x base only admits patch releases (`^0.1.0` stops at 0.1.x), so
+   every minor release needs the catalog range bumped to its own `^0.X.0`.
 
 Rules that bb enforces (from its distribution contract):
 
