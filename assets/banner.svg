@@ -1,43 +1,107 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="320" viewBox="0 0 1280 320">
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="640" viewBox="0 0 1280 640">
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#0b1026"/>
-      <stop offset="0.55" stop-color="#131a3a"/>
-      <stop offset="1" stop-color="#1d1040"/>
-    </linearGradient>
-    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0" stop-color="#7cc7ff"/>
-      <stop offset="1" stop-color="#b79cff"/>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0B0B10"/>
+      <stop offset="1" stop-color="#0A0A0C"/>
     </linearGradient>
     <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
-      <stop offset="0" stop-color="#7cc7ff" stop-opacity="0.35"/>
-      <stop offset="1" stop-color="#7cc7ff" stop-opacity="0"/>
+      <stop offset="0" stop-color="#3B5BFB" stop-opacity="0.16"/>
+      <stop offset="1" stop-color="#3B5BFB" stop-opacity="0"/>
     </radialGradient>
+    <pattern id="dots" width="26" height="26" patternUnits="userSpaceOnUse">
+      <circle cx="1.4" cy="1.4" r="1.2" fill="#FFFFFF" opacity="0.05"/>
+    </pattern>
   </defs>
 
-  <rect width="1280" height="320" rx="24" fill="url(#bg)"/>
+  <rect width="1280" height="640" rx="28" fill="url(#bg)"/>
+  <rect width="1280" height="640" rx="28" fill="url(#dots)"/>
+  <circle cx="1130" cy="90" r="330" fill="url(#glow)"/>
+  <circle cx="140" cy="580" r="260" fill="url(#glow)"/>
 
-  <g fill="#ffffff" opacity="0.55">
-    <circle cx="90" cy="60" r="1.6"/>
-    <circle cx="210" cy="240" r="1.2"/>
-    <circle cx="340" cy="50" r="1.4"/>
-    <circle cx="520" cy="270" r="1.6"/>
-    <circle cx="700" cy="46" r="1.2"/>
-    <circle cx="880" cy="262" r="1.5"/>
-    <circle cx="1060" cy="70" r="1.3"/>
-    <circle cx="1180" cy="230" r="1.6"/>
-    <circle cx="1210" cy="110" r="1.1"/>
-    <circle cx="440" cy="120" r="1.1"/>
-    <circle cx="990" cy="160" r="1.2"/>
-    <circle cx="150" cy="170" r="1.3"/>
+  <!-- logo tile -->
+  <g transform="translate(64 56)">
+    <rect width="96" height="96" rx="18" fill="#141419" stroke="#26262E" stroke-width="1.5"/>
+    <g stroke="#FFFFFF" stroke-width="7.6" fill="none">
+      <path d="M27 26 V70"/>
+      <path d="M56 29.6 L27 48.4"/>
+      <path d="M30.6 44.8 L58.4 70"/>
+    </g>
+    <circle cx="66.5" cy="27.5" r="4.2" fill="#3B5BFB"/>
   </g>
 
-  <circle cx="170" cy="160" r="110" fill="url(#glow)"/>
-  <g transform="translate(114 104) scale(4.6667)" fill="url(#accent)">
-    <path d="M19.514 7.342C19.711 7.862 19.814 8.413 19.816 8.969C19.816 12.494 15.998 14.697 12.946 12.934C11.529 12.116 10.657 10.605 10.657 8.969C10.657 5.646 14.085 3.431 17.115 4.793C15.26 3.373 12.99 2.607 10.655 2.612C4.772 2.614 0.005 7.381 0 13.265C0.002 19.148 4.772 23.918 10.655 23.92C16.538 23.916 21.306 19.147 21.31 13.265C21.312 11.155 20.687 9.095 19.514 7.342ZM14.841 4.666C14.841 8.191 18.657 10.395 21.709 8.632C23.127 7.814 24 6.302 24 4.666C24 1.14 20.184-1.061 17.13 0.699C15.714 1.519 14.841 3.03 14.841 4.666"/>
+  <!-- header -->
+  <text x="188" y="106" xml:space="preserve" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="58" font-weight="700" fill="#F5F7FB" letter-spacing="-1">Kimi Code<tspan fill="#3B5BFB"> for bb</tspan></text>
+  <text x="190" y="146" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="21" fill="#98A1B3">Run Kimi Code CLI threads from bb's provider picker — locally and on enrolled remote hosts</text>
+
+  <!-- badges -->
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14">
+    <g transform="translate(190 168)">
+      <rect width="170" height="30" rx="15" fill="#12131A" stroke="#2A2C38"/>
+      <text x="16" y="20" fill="#8FB0FF">bridge: ACP</text>
+    </g>
+    <g transform="translate(372 168)">
+      <rect width="196" height="30" rx="15" fill="#12131A" stroke="#2A2C38"/>
+      <text x="16" y="20" fill="#8FB0FF">conformance 16/16</text>
+    </g>
+    <g transform="translate(580 168)">
+      <rect width="170" height="30" rx="15" fill="#12131A" stroke="#2A2C38"/>
+      <text x="16" y="20" fill="#8FB0FF">models: live probe</text>
+    </g>
   </g>
 
-  <text x="300" y="150" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="56" font-weight="700" fill="#f4f7ff">bb-kimi-code</text>
-  <text x="300" y="205" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="24" fill="#9fb3d9">Run Kimi Code inside bb — locally and on remote hosts</text>
-  <text x="300" y="248" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="17" fill="#63759c">a bb provider plugin over the Agent Client Protocol</text>
+  <line x1="64" y1="230" x2="1216" y2="230" stroke="#22242E" stroke-width="1"/>
+
+  <!-- columns -->
+  <g font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif">
+
+    <!-- USE IT -->
+    <text x="64" y="272" font-size="14" font-weight="700" fill="#3B5BFB" letter-spacing="3.5">USE IT</text>
+    <g font-size="16.5" fill="#C7CDD9">
+      <text x="64" y="308"><tspan fill="#3B5BFB">•</tspan>  Install the Kimi Code CLI, then <tspan font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#8FB0FF">kimi login</tspan></text>
+      <text x="64" y="342"><tspan fill="#3B5BFB">•</tspan>  Add the marketplace to bb:</text>
+      <text x="84" y="370" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" fill="#8FB0FF">bb marketplace add \</text>
+      <text x="84" y="392" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" fill="#8FB0FF">  git:github.com/dpolishuk/bb-kimi-code@main</text>
+      <text x="64" y="426"><tspan fill="#3B5BFB">•</tspan>  Settings → Plugins → install «Kimi Code»</text>
+      <text x="64" y="460"><tspan fill="#3B5BFB">•</tspan>  Pick Kimi Code in the composer: K3, K3-256k,</text>
+      <text x="84" y="484">K2.8 Preview, K2.7 Code Highspeed</text>
+      <text x="64" y="518"><tspan fill="#3B5BFB">•</tspan>  Choose thinking level and mode:</text>
+      <text x="84" y="542">Default / Plan / Auto / YOLO</text>
+    </g>
+
+    <!-- HOW IT WORKS -->
+    <text x="484" y="272" font-size="14" font-weight="700" fill="#3B5BFB" letter-spacing="3.5">HOW IT WORKS</text>
+    <g font-size="16.5" fill="#C7CDD9">
+      <text x="484" y="308"><tspan fill="#3B5BFB">•</tspan>  bb server registers the provider declaration:</text>
+      <text x="504" y="332">capabilities, model catalog, skill roots</text>
+      <text x="484" y="366"><tspan fill="#3B5BFB">•</tspan>  The host artifact is bb's own ACP bridge,</text>
+      <text x="504" y="390">digest-verified and delivered per host</text>
+      <text x="484" y="424"><tspan fill="#3B5BFB">•</tspan>  The daemon spawns <tspan font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#8FB0FF">kimi acp</tspan> and talks</text>
+      <text x="504" y="448">ACP over stdio JSON-RPC</text>
+      <text x="484" y="482"><tspan fill="#3B5BFB">•</tspan>  Models, thinking levels and modes are probed</text>
+      <text x="504" y="506">live from the agent's configOptions</text>
+      <text x="484" y="540"><tspan fill="#3B5BFB">•</tspan>  Approvals are gated by bb permission modes</text>
+      <text x="504" y="564">(accept-edits · full)</text>
+    </g>
+
+    <!-- DESIGN IDEAS -->
+    <text x="904" y="272" font-size="14" font-weight="700" fill="#3B5BFB" letter-spacing="3.5">DESIGN IDEAS</text>
+    <g font-size="16.5" fill="#C7CDD9">
+      <text x="904" y="308"><tspan fill="#3B5BFB">•</tspan>  ACP kit over a custom bridge — zero</text>
+      <text x="924" y="332">protocol code of our own to maintain</text>
+      <text x="904" y="366"><tspan fill="#3B5BFB">•</tspan>  Declare only what the bridge honors:</text>
+      <text x="924" y="390">fork: none (kimi ≥ 2.3.0 session lock),</text>
+      <text x="924" y="414">no bb «auto» mode (ACP can't enforce it)</text>
+      <text x="904" y="448"><tspan fill="#3B5BFB">•</tspan>  Nothing hardcoded — kimi-side renames</text>
+      <text x="924" y="472">like «K2.8 Preview» just show up</text>
+      <text x="904" y="506"><tspan fill="#3B5BFB">•</tspan>  A kimi dialect object owns maintenance:</text>
+      <text x="924" y="530">install plan, sign-in detection, usage: none</text>
+      <text x="904" y="564"><tspan fill="#3B5BFB">•</tspan>  TDD with the conformance kit, live probes</text>
+      <text x="924" y="588">and an OKF knowledge base</text>
+    </g>
+  </g>
+
+  <!-- footer -->
+  <text x="64" y="618" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#5E6678">github.com/dpolishuk/bb-kimi-code</text>
+  <circle cx="1204" cy="612" r="5" fill="#3B5BFB"/>
+  <text x="1180" y="618" text-anchor="end" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" fill="#5E6678">MIT · v0.2</text>
 </svg>
