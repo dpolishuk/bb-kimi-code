@@ -35,6 +35,17 @@ sources:
 |---|---|
 | `id`, `displayName`, `icon`, `family` | идентичность в пикере; id персистится в строках треда |
 | `strings` | copy для core-поверхностей: sign-in hint, expiry hint, install URL, brand prefix, plan-mode copy, icon tint |
+
+`icon` (логотип провайдера из `bb.branding.icon`) рендерится как
+**currentColor-маска** («Provider logo assets use a currentColor mask» —
+`PluginProviderIconRegistration` в SDK): выживает только альфа-силуэт,
+залитый цветом текста. Отсюда правила: SVG строго одноцветный, смысл несут
+вырезы в силуэте (evenodd), многоцветность — только через React-слот
+`experimental_Icon` в app.tsx; цвет силуэта можно перекрыть per-theme через
+`strings.iconTint { light, dark }`. Маркетплейс маскирует SVG так же — для
+витрины многоцветную иконку вендорим в PNG/WebP. Проверено 2026-10-23 на
+icons/kimi.svg: многоцветный тайл схлопывался в пустой квадрат в пилюле
+композера; пин — `icon.test.ts` (одна краска + evenodd).
 | `capabilities` | pre-session факты: `permissionModes` (закрытый enum), `fork` (`none`/`tip`/`checkpoint`), compaction, archive, rename |
 | `maintenance` | какие sessionless `provider/*` методы поддерживает bridge (`health`, `usage`, `installation`); каждый по умолчанию `false` |
 | `models` | `{ fallback, scope }`: `fallback` — холодный кэш до первой пробы `model/list`; `scope` (`host`/`workspace`) — как далеко распространяется ответ |
