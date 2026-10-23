@@ -22,6 +22,16 @@
   occupancy `-32603` без типизации (текст в `data.details`, SDK его доносит)
   — typed hint невозможен без поддержки kimi, текст-матчинг запрещён.
 
+* **Tests**: аудит steer/cancel — live `kimi-live.steer.test.ts` зелёный:
+  `turn/steer` во время активного turn'а (мост очередит ввод + `session/cancel`,
+  kimi честно прерывает и отвечает на steer) и `thread/stop` interrupt
+  оседают корректно. Заметка: kimi не сообщает provider turn id, а мост
+  `expectedTurnId` не читает. Фикстуры record/replay: live-тесты умеют
+  `BB_KIMI_FIXTURE_RECORD` (ndjson-дамп выхода моста с redact), коммит в
+  `recordings/`, in-process реплей через `experimental_assembleCapturedThreadEvents`
+  (`fixtures.test.ts`); подход зафиксирован в
+  [ранбуке](runbooks/verify-plugin-change.md#4-recordreplay-паритет-для-bridge-с-реальным-провайдером).
+
 * **Merge**: PR [get-bb/marketplace#651](https://github.com/get-bb/marketplace/pull/651)
   смёржен (approve от SawyerHood, 2026-10-23T14:04:58Z, merge `02708706`) —
   kimi-code опубликован в bb-community каталоге. Источник entry — range

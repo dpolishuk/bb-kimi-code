@@ -71,6 +71,23 @@ bb plugin reload <id>   # после правок установленного �
 - Записи редактируются (redact) и коммитятся в плагин; реплей — `experimental_replayRecording`, дифф — `experimental_compareParity`. Эталон: `provider-bridge.parity.test.ts`.[^providers-ref]
 - При намеренном изменении потока: `experimental_rerecordCurrentBridgeLane` пишет `bridge→runtime.current.ndjson` рядом с записью; сама запись никогда не перезаписывается.[^providers-ref]
 
+### Как это сделано в этом репозитории (с 2026-10-23)
+
+Полный `replayRecording` поднимает bridge субпроцессом с replay-обёрткой —
+машинерия рассчитана на матрицу bb (`packages/provider-parity`); для плагина
+используем облегчённый уровень, держащий ту же цель (дрейф граммары и
+классификации):
+
+- Запись: `BB_KIMI_LIVE=1 BB_KIMI_FIXTURE_RECORD=recordings/<name>.ndjson npx
+  vitest run kimi-live.<name>.test.ts` — live-тест дампит выходные
+  bridge-нотификации в ndjson, редактируя путь воркспейса и id сессии.
+- Коммит фикстуры в `recordings/`; реплей in-process:
+  `experimental_assembleCapturedThreadEvents(fixture, "kimi-code")` гоняет
+  дельты через настоящий ассемблер SDK (см. `fixtures.test.ts` — пин
+  delegation-классификации).
+- Субпроцессный `replayRecording` остаётся доступным в SDK; поднимаем его,
+  если понадобится дифф двух версий моста (compareParity) против одной записи.
+
 # Критерии готовности
 
 1. Все применимые conformance-правила зелёные; stream/parity/unit-тесты зелёные.

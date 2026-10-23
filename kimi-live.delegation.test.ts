@@ -122,6 +122,26 @@ itLive("surfaces a kimi Agent tool call", async () => {
       "delegation label carries the subagent task",
     ).toBeTruthy();
     expect(settled).toBe(true);
+
+    // Fixture recording: BB_KIMI_FIXTURE_RECORD=<path> dumps the bridge's
+    // outbound notifications as ndjson (workspace path and session id
+    // redacted) for the committed replay fixture in fixtures.test.ts.
+    const fixturePath = process.env.BB_KIMI_FIXTURE_RECORD;
+    if (fixturePath !== undefined) {
+      const { writeFileSync, mkdirSync } = await import("node:fs");
+      const { dirname } = await import("node:path");
+      mkdirSync(dirname(fixturePath), { recursive: true });
+      const redact = (text: string) =>
+        text
+          .split(workspaceDir).join("/tmp/bb-kimi-fixture")
+          .split(providerThreadId).join("session_redacted");
+      writeFileSync(
+        fixturePath,
+        harness.messages
+          .map((message) => redact(JSON.stringify(message)))
+          .join("\n") + "\n",
+      );
+    }
   } finally {
     harness.restore();
   }
