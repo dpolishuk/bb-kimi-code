@@ -1,6 +1,6 @@
 {
   "name": "bb-plugin-kimi-code",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "private": true,
   "type": "module",
   "description": "Run Kimi Code CLI threads from bb, locally and on enrolled hosts, through the ACP provider bridge.",

@@ -23,6 +23,9 @@ export default function plugin(bb: BbPluginApi) {
       expiredHint:
         "Your Kimi Code session expired. Run `kimi login`, then reload.",
       installUrl: "https://github.com/MoonshotAI/kimi-code",
+      // bb draws provider logos as currentColor masks; tint the silhouette
+      // with the kimi tile colors instead of the ambient text color.
+      iconTint: { light: "#0A0A0C", dark: "#FFFFFF" },
     },
     maintenance: { health: true, usage: false, installation: true },
     capabilities: {

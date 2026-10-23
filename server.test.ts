@@ -96,6 +96,13 @@ describe("the kimi-code provider declaration", () => {
     expect(strings?.expiredHint).toContain("kimi login");
   });
 
+  it("tints the masked provider icon with the kimi tile colors per theme", () => {
+    expect(registeredDeclaration().strings?.iconTint).toEqual({
+      light: "#0A0A0C",
+      dark: "#FFFFFF",
+    });
+  });
+
   it("serves a host-scoped model catalog with an empty cold-cache fallback", () => {
     expect(registeredDeclaration().models).toEqual({
       fallback: [],
