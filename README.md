@@ -29,8 +29,10 @@ machines** — the only requirement on a host is an installed and signed-in
 
 Everything Kimi Code exposes over ACP works in bb:
 
-- **Threads with streaming, resume, and fork** — the full canonical bridge
-  conformance suite passes live against a real `kimi acp` (16/16 checks).
+- **Threads with streaming and resume** — the canonical bridge conformance
+  suite passes live against a real `kimi acp`, except `session/fork-identity`:
+  kimi ≥ 2.3.0 locks live sessions to their process and bb forks from a new
+  process, so fork is disabled (`fork: "none"`).
 - **Tool calls on the timeline** — file edits, commands, searches and reads
   render as native bb rows (live-verified with a real file-writing turn).
 - **Model picker** — the models Kimi Code reports (`kimi-code/k3`,

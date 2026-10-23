@@ -45,7 +45,9 @@ itLive("reports health, installation, and usage through the kimi dialect", async
       };
     };
     expect(healthResult.health.status).toBe("ready");
-    expect(healthResult.health.installedVersion).toBe("2.2.0");
+    // The CLI self-updates (2.2.0 -> 2.3.0 landed unprompted), so an exact
+    // version pin breaks on every update; health must report a real semver.
+    expect(healthResult.health.installedVersion).toMatch(/^\d+\.\d+\.\d+$/);
     expect(healthResult.health.loginCommand).toBe("kimi login");
     expect(healthResult.health.canInstall).toBe(true);
 

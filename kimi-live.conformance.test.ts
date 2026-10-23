@@ -57,7 +57,23 @@ itLive("passes the canonical protocol suite against a real kimi acp", async () =
     });
 
     console.info(`kimi bridge live conformance:\n${formatConformanceReport(report)}`);
-    expect(report.passed).toBe(true);
+
+    // kimi >= 2.3.0 locks every session to its owning process, and bb forks
+    // by asking a NEW kimi process to fork the still-live source session, so
+    // fork always fails against a live session. The declaration says
+    // fork: "none" and the plugin's host.ts wrapper narrows the initialize
+    // handshake the same way, so the conformance kit excludes the fork rule
+    // entirely instead of running it into the lock. If this pin breaks with
+    // the rule failing again, the handshake narrowing regressed; if it breaks
+    // with the rule passing, kimi dropped the lock — restore fork: "tip" in
+    // server.ts, drop the handshake wrapper, and go back to asserting
+    // report.passed.
+    expect(
+      report.results.some((result) => result.id === "session/fork-identity"),
+    ).toBe(false);
+    expect(report.results.map((result) => result.status)).toEqual(
+      report.results.map(() => "pass"),
+    );
   } finally {
     output.restore();
   }

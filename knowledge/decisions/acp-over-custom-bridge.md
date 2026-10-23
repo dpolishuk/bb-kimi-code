@@ -19,6 +19,18 @@ sources:
     resource: https://github.com/get-bb/bb/blob/e0f6fda5a02332bd4eb44183542a57f34f3263d7/docs/provider-plugin-api.md
     title: Provider plugin API — ACP bridge kit
     author: team:get-bb
+  - id: audit-23
+    resource: Свежие пробы handshake/session/new против kimi acp 2.3.0 и сверка с релиз-нотами, 2026-10-22
+    title: Аудит-дельта покрытия kimi 2.3.0
+    author: zcode
+  - id: incident-23
+    resource: knowledge/incidents/2026-10-22-kimi-23-session-lock-breaks-fork.md
+    title: Инцидент session lock kimi 2.3.0 (fork живой сессии)
+    author: zcode
+  - id: swarm-dump
+    resource: Live-дамп bb/provider-commands и bb/session-options через bridge против kimi acp 2.3.0 (thread/start без промпта), 2026-10-22; сверка с llms-full.txt moonshotai.github.io/kimi-code
+    title: Полный список публикуемых команд и опций kimi acp 2.3.0
+    author: zcode
 ---
 
 # Решение
@@ -48,7 +60,10 @@ sources:
   `@get-bb/plugin-sdk` 0.6.49–0.6.54).
 - Handshake generic ACP bridge: `fork: "tip"`, `approvalEnforcedBy: "runtime"`,
   `grammarVersions: [3, 3]`, `skills.configure: true` — поэтому декларация
-  заявляет `fork: "tip"` и все три permission modes.
+  заявляла `fork: "tip"` и все три permission modes. С 2026-10-22 fork сужен
+  до `none`: kimi 2.3.0 ввёл session lock, ломающий кросс-процессный fork
+  живой сессии — см. [инцидент](../incidents/2026-10-22-kimi-23-session-lock-breaks-fork.md);
+  handshake моста при этом сужен до `none` обёрткой в `host.ts` (SDK хардкодит `"tip"`).
 
 # Последствия
 
@@ -114,6 +129,68 @@ SDK зафиксирован в `host.ts`.
   CLI-фичи вне ACP.
 - **MCP** — работает через собственную конфигурацию kimi (`/mcp-config`,
   config.toml), bb им не управляет.
+
+# Аудит-дельта против kimi 2.3.0 (2026-10-22)
+
+Свежий handshake и `session/new` против живого 2.3.0; релиз-нот новых
+ACP-инструментов не содержат. Что изменилось против матрицы выше:
+
+- handshake: `sessionCapabilities` пополнились `additionalDirectories`
+  (соответствует CLI `--add-dir`), заявлены `mcpCapabilities {http, sse}` и
+  `auth: {logout}`; `configOptions` не изменились (model ×4, thinking
+  low/high/max, mode ×4).[^audit-23]
+- **fork** — см. [инцидент 2026-10-22](../incidents/2026-10-22-kimi-23-session-lock-breaks-fork.md):
+  multi-client session occupancy в 2.3.0 и есть тот лок; декларация и (с
+  2026-10-22, обёртка в `host.ts`) handshake — `none`.
+- **`additionalDirectories`** — gap SDK-моста: bb→bridge протокол имеет
+  `additionalWorkspaceWriteRoots`, но мост шлёт агенту в `session/new` только
+  `cwd`+`mcpServers` и корни не пробрасывает. Плагином не чинится (нет хука в
+  setup сессии); практическое влияние не проверялось (нужен live multi-root
+  turn). Кандидат в upstream-issue к get-bb/plugin-sdk.[^audit-23]
+- **`auth.logout`** — kimi объявляет, SDK-клиент имеет request spec, но ни
+  мост, ни bb не имеют поверхности вызова: выйти из аккаунта kimi через bb
+  нельзя, только локально.[^audit-23]
+- **ACP `plan/update`** — мост мапит в bb plan-steps, но kimi их не эмитит
+  (в бинаре упоминаний нет): Plan-режим работает как mode, живого план-таймлайна
+  от kimi в bb нет — ограничение провайдера.[^audit-23]
+- **Сессии монопольны**: один kimi-session нельзя держать открытым
+  одновременно в живом bb-треде и в интерактивном kimi (`-S`/`--continue`) —
+  второй клиент получит occupancy-ошибку.[^incident-23]
+
+## Дельта по swarm и secondary model (2026-10-22, live-дамп команд)
+
+Живой дамп `bb/provider-commands` и `bb/session-options` против kimi acp
+2.3.0 через наш bridge (thread/start без промпта):[^swarm-dump]
+
+- команды: `compact`, `status`, `usage`, `mcp`, `tasks`, `help`,
+  `check-kimi-code-docs`, `import-from-cc-codex`, `mcp-config`, `sub-skill`,
+  `sub-skill.consolidate`, `sub-skill.review`, `update-config`, `write-goal`,
+  плюс `skill:*` — против трёх (`compact`/`status`/`usage`) в аудите 2.2.0;
+- session-options: только `mode` (default/plan/auto/yolo).
+
+Вердикты:
+
+- **Swarm-режим** (мод сессии + команда `/swarm` + прогресс-панель) — TUI/web
+  -only, через ACP не экспонируется: ни mode-значения, ни `/swarm` в дампе
+  команд.[^swarm-dump] При этом тул `AgentSwarm` — обычный инструмент агента:
+  модель может вызвать его и в ACP-сессии (вне swarm-мода в manual — с
+  approval; approval enforce'ит runtime bb); на таймлайне выглядит generic
+  tool-строкой, как `Agent`. Живой turn с `AgentSwarm` не проверялся —
+  вывод из документации и кода kimi-code (llms-full.txt, тул-спека).
+  Delegation-отображение роя — то же возможное улучшение диалекта, что и для
+  `Agent`.
+- **Secondary model** (`[secondary_model]` / пул `[secondary_model.models]`,
+  stable с 2.2.x) — конфигурация config.toml kimi, через ACP не управляется
+  (`/secondary-model` в дампе команд отсутствует). Работает прозрачно
+  kimi-стороны: пул даёт тулам `Agent`/`AgentSwarm` параметр `model`;
+  настроить из bb-треда можно командой `update-config` (публикуется) или
+  правкой `~/.kimi-code/config.toml`. bb-настройки плагина для пула нет —
+  и не нужно: bb не владеет конфигом kimi.
+
+[^swarm-dump]: Live-дамп provider-commands/session-options против kimi acp 2.3.0 (in-process bridge, thread/start без промпта), 2026-10-22; сверка с llms-full.txt moonshotai.github.io/kimi-code
+
+[^audit-23]: Свежие пробы handshake/session/new против kimi 2.3.0 и сверка с релиз-нотами, 2026-10-22
+[^incident-23]: Инцидент session lock, 2026-10-22
 
 [^kimi-readme]: MoonshotAI/kimi-code README
 [^kimi-acp-probe]: Локальный пробник kimi acp, 2026-10-20
