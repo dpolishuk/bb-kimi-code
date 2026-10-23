@@ -19,6 +19,14 @@ sources:
     resource: https://github.com/get-bb/bb/blob/e0f6fda5a02332bd4eb44183542a57f34f3263d7/docs/provider-plugin-api.md
     title: Provider plugin API — ACP bridge kit
     author: team:get-bb
+  - id: audit-23
+    resource: Свежие пробы handshake/session/new против kimi acp 2.3.0 и сверка с релиз-нотами, 2026-10-22
+    title: Аудит-дельта покрытия kimi 2.3.0
+    author: zcode
+  - id: incident-23
+    resource: knowledge/incidents/2026-10-22-kimi-23-session-lock-breaks-fork.md
+    title: Инцидент session lock kimi 2.3.0 (fork живой сессии)
+    author: zcode
 ---
 
 # Решение

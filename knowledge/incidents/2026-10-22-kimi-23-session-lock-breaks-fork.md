@@ -1,7 +1,7 @@
 ---
 type: Incident
 title: "kimi 2.3.0 сломал fork в bb: session lock запрещает кросс-процессный fork живой сессии"
-description: Почему thread fork для kimi-code перестал работать и в conformance, и вживую — kimi 2.3.0 держит эксклюзивный лок сессии на процесс, а bb форкает новым процессом; декларация сужена до fork none, исход_rule запинован в live-тесте.
+description: Почему thread fork для kimi-code перестал работать и в conformance, и вживую — kimi 2.3.0 держит эксклюзивный лок сессии на процесс, а bb форкает новым процессом; декларация сужена до fork none, исход правила запинован в live-тесте.
 status: stable
 tags: [bb, kimi, incident, fork, session-lock, acp]
 generated: { by: zcode, at: "2026-10-22T19:35:00Z" }

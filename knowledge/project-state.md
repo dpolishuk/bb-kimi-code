@@ -11,10 +11,10 @@ sources:
     resource: /Users/dpolishuk/work/bb-kimi-code
     title: Наблюдение файловой системы и прогоны тестов/сборки 2026-10-20
     author: kimi-code/k3
-  - id: live-conformance
-    resource: Локальные прогоны `BB_KIMI_LIVE=1 npx vitest run kimi-live.*`, 2026-10-20
-    title: Live-проверки против реального kimi acp — conformance 16/16, session state, maintenance
-    author: kimi-code/k3
+  - id: live-2022
+    resource: Локальные прогоны `BB_KIMI_LIVE=1 npx vitest run kimi-live.*`, 2026-10-22
+    title: Live-проверки против kimi acp 2.3.0 — conformance все правила, кроме запинованного session/fork-identity; session state, maintenance, models, tools
+    author: zcode
 ---
 
 # Наблюдаемые факты (проверены 2026-10-22)
