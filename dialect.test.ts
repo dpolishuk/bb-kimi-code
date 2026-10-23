@@ -86,3 +86,68 @@ describe("the kimi ACP dialect maintenance hooks", () => {
     expect(kimiAcpDialect.maintenance?.loginCommand).toBe("kimi login");
   });
 });
+
+describe("the kimi ACP dialect subagent classification", () => {
+  // Event shapes below are copied from the live recording of kimi acp 2.3.0
+  // (/tmp probe, 2026-10-23, kimi-live.delegation.test.ts): the Agent tool
+  // opens with title "Agent" and no input, then an in_progress update carries
+  // the title "Launching <type> agent: <description>" and the structured
+  // rawInput { prompt, description }.
+  it("classifies kimi's Agent tool call as a delegation", () => {
+    const classified = kimiAcpDialect.classifyToolCall?.({
+      sessionUpdate: "tool_call",
+      toolCallId: "0:tool_1",
+      title: "Agent",
+      kind: "other",
+      status: "pending",
+    });
+    expect(classified?.item).toEqual({
+      type: "delegation",
+      childRef: "0:tool_1",
+      label: "Agent",
+      background: false,
+    });
+  });
+
+  it("labels the delegation from rawInput description once it streams in", () => {
+    const classified = kimiAcpDialect.classifyToolCall?.({
+      sessionUpdate: "tool_call_update",
+      toolCallId: "0:tool_1",
+      title: "Launching coder agent: Compute 2+2",
+      kind: "other",
+      status: "in_progress",
+      rawInput: {
+        prompt: "Compute 2+2 and reply with just the number",
+        description: "Compute 2+2",
+      },
+    });
+    expect(classified?.item).toEqual({
+      type: "delegation",
+      childRef: "0:tool_1",
+      label: "Compute 2+2",
+      background: false,
+    });
+    expect(classified?.presentation.detail).toBe("coder");
+  });
+
+  it("leaves non-Agent tools to the generic classifier", () => {
+    expect(
+      kimiAcpDialect.classifyToolCall?.({
+        sessionUpdate: "tool_call",
+        toolCallId: "0:tool_2",
+        title: "Read",
+        kind: "read",
+        status: "pending",
+      }),
+    ).toBeUndefined();
+    expect(
+      kimiAcpDialect.classifyToolCall?.({
+        sessionUpdate: "tool_call",
+        toolCallId: "0:tool_3",
+        title: "Agentation", // merely contains "Agent" as a substring
+        kind: "other",
+        status: "pending",
+      }),
+    ).toBeUndefined();
+  });
+});

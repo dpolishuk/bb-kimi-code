@@ -106,9 +106,13 @@ SDK зафиксирован в `host.ts`.
 - маппинг инструментов kimi (Read/Write/Edit/Bash/WebFetch/Think →
   read/edit/execute/fetch/think) покрыт generic-классификацией — по коду
   `packages/acp-server/src/events-map.ts` в MoonshotAI/kimi-code;
-- **субагенты** (инструмент `Agent`, kind `other`) приходят generic tool-
-  строками — функционально; delegation-отображение — возможное улучшение
-  диалекта (по коду `agent/tools/agent/agentTool.ts`);
+- **субагенты** (инструмент `Agent`, kind `other`) — с 2026-10-23 (v0.2.7)
+  классифицируются диалектом в delegation-строки (`classifyToolCall` в
+  `src/dialect.ts`, по прецеденту grok/cursor диалектов SDK; `childRef` =
+  toolCallId, label из `rawInput.description`). Wire-шейпы запинены в
+  `dialect.test.ts` по записи `BB_PROVIDER_BRIDGE_RECORD_DIR`, end-to-end —
+  live-тест `kimi-live.delegation.test.ts`. `AgentSwarm` не пробирован —
+  остаётся generic tool-строкой;
 - **AskUserQuestion** мапится kimi в ACP `session/request_permission` →
   approval с вариантами ответа в bb (по коду `acp-server/src/question.ts`);
   поэтому `supportsNativeUserQuestion: false` — вопросы работают, но не как
@@ -215,6 +219,16 @@ ACP-инструментов не содержат. Что изменилось 
   «medium» остаётся no-op — kimi бежит на своём дефолте high).
 - **Mode-селектор** (default/plan/auto/yolo) живёт не в пикере моделей, а в
   composer footer как session-option — тоже виден в `bb provider models`.
+- **Ошибки kimi на проводе** (пробы 2026-10-23, `/tmp/probe-occupancy.mjs`,
+  `/tmp/probe-auth.mjs`): auth — `-32000 "Authentication required"`,
+  стандартный ACP-шейп, SDK мапит в typed recovery `authRequired` с подсказкой
+  `kimi login` (`isAcpAuthRequiredResponse` + `withAcpSignInGuidance`) —
+  покрыто без нас. Occupancy — `-32603 Internal error` с человеческим текстом
+  в `data.details` («This session is in use by another Kimi Code process...»):
+  типизированного сигнала нет, текст-матчинг запрещён правилами — typed hint
+  невозможен без поддержки kimi; при этом SDK доносит `data.details` до
+  пользователя (`formatAgentError`), так что причина видна как есть.
+  Rate limit живьём не форсировали.
 
 [^swarm-dump]: Live-дамп provider-commands/session-options против kimi acp 2.3.0 (in-process bridge, thread/start без промпта), 2026-10-22; сверка с llms-full.txt moonshotai.github.io/kimi-code
 
