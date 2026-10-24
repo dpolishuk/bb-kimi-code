@@ -13,6 +13,7 @@ okf_version: "0.2"
 # Решения
 
 * [ACP вместо собственного bridge](decisions/acp-over-custom-bridge.md) — Kimi Code подключается через готовый ACP-кит bb; основания из живого handshake `kimi acp`.
+* [Upstream PR-план: расширение Kimi Code](roadmap/2026-10-24-kimi-code-upstream-prs.md) — семь аккуратных PR в MoonshotAI/kimi-code (typed occupancy, usage --json, plan-шаги, swarm-прогресс, secondary model, video, fork handoff) с файлами, размерами и порядком; карта исходников acp-server/agent-core-v2.
 
 # Архитектура
 
