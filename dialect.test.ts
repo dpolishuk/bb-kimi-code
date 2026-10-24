@@ -150,4 +150,63 @@ describe("the kimi ACP dialect subagent classification", () => {
       }),
     ).toBeUndefined();
   });
+
+  it("classifies kimi's AgentSwarm tool call as a delegation", () => {
+    const classified = kimiAcpDialect.classifyToolCall?.({
+      sessionUpdate: "tool_call",
+      toolCallId: "0:tool_4",
+      title: "AgentSwarm",
+      kind: "other",
+      status: "pending",
+    });
+    expect(classified?.item).toEqual({
+      type: "delegation",
+      childRef: "0:tool_4",
+      label: "AgentSwarm",
+      background: false,
+    });
+  });
+
+  it("labels the swarm delegation from its description and counts the items", () => {
+    const classified = kimiAcpDialect.classifyToolCall?.({
+      sessionUpdate: "tool_call_update",
+      toolCallId: "0:tool_4",
+      title: "Launching agent swarm: Compute two expressions",
+      kind: "other",
+      status: "in_progress",
+      rawInput: {
+        description: "Compute two expressions",
+        prompt_template: "Compute the expression in the item: {{item}}",
+        items: ["Compute 2+2", "Compute 3+3"],
+      },
+    });
+    expect(classified?.item).toEqual({
+      type: "delegation",
+      childRef: "0:tool_4",
+      label: "Compute two expressions",
+      background: false,
+    });
+    expect(classified?.presentation.detail).toBe("2 tasks");
+  });
+
+  it("does not confuse the Agent and AgentSwarm launch titles", () => {
+    const swarm = kimiAcpDialect.classifyToolCall?.({
+      sessionUpdate: "tool_call_update",
+      toolCallId: "0:tool_5",
+      title: "Launching agent swarm: two tasks",
+      kind: "other",
+      status: "in_progress",
+      rawInput: { description: "two tasks", items: ["a", "b"] },
+    });
+    expect(swarm?.presentation.detail).toBe("2 tasks");
+    const agent = kimiAcpDialect.classifyToolCall?.({
+      sessionUpdate: "tool_call_update",
+      toolCallId: "0:tool_6",
+      title: "Launching coder agent: one task",
+      kind: "other",
+      status: "in_progress",
+      rawInput: { description: "one task" },
+    });
+    expect(agent?.presentation.detail).toBe("coder");
+  });
 });

@@ -22,14 +22,14 @@
   при падении печатает хвост вывода. Ручной прогон `arun_8rd-xymixkg`
   зелёный (exit 0, silent). Урок тихого авто-апдейта kimi 2.2.0→2.3.0.
 
-* **Feature**: v0.2.7 — субагенты kimi (инструмент `Agent`) отображаются
-  delegation-строками вместо generic tool: `classifyToolCall` в диалекте
-  (прецеденты grok/cursor в SDK; `childRef` = toolCallId, label из
-  `rawInput.description`, detail = тип субагента из «Launching <type>
-  agent: ...»). Шейпы запинены в `dialect.test.ts` по записи
-  `BB_PROVIDER_BRIDGE_RECORD_DIR`, end-to-end — новый live-тест
-  `kimi-live.delegation.test.ts`. `AgentSwarm` не пробирован, остаётся
-  generic.
+* **Feature**: v0.2.7/v0.2.9 — субагенты kimi (`Agent`, `AgentSwarm`)
+  отображаются delegation-строками вместо generic tool: `classifyToolCall` в
+  диалекте (прецеденты grok/cursor в SDK; `childRef` = toolCallId; Agent:
+  label из `rawInput.description`, detail = тип субагента из «Launching <type>
+  agent: ...»; `AgentSwarm` — label из `rawInput.description`, detail =
+  число задач из `rawInput.items`). Шейпы запинены в `dialect.test.ts` по
+  записям `BB_PROVIDER_BRIDGE_RECORD_DIR`, end-to-end — live-тесты
+  `kimi-live.delegation.test.ts` и `kimi-live.swarm.test.ts`.
 * **Upstream**: PR [get-bb/bb#6180](https://github.com/get-bb/bb/pull/6180) —
   проброс `additionalWorkspaceWriteRoots` как `additionalDirectories` в
   `session/new`/`load`/`resume`/`fork` (гейт на capability). Покрытие добито

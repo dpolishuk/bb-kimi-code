@@ -3,22 +3,38 @@ import type { AcpClassifiedToolCall, AcpDialect, AcpToolCallUpdateEvent } from "
 
 import { readKimiAccountFromDisk } from "./kimi-account.js";
 
-// kimi emits its Agent tool over ACP as kind "other" with the tool name in the
-// title: "Agent" at open, then "Launching <type> agent: <description>" on the
-// in_progress update whose rawInput carries { prompt, description } (live
-// recording 2026-10-23, kimi-live.delegation.test.ts). kimi sends no _meta
-// tool identity, so the title is the only identity signal.
+// kimi emits its Agent and AgentSwarm tools over ACP as kind "other" with the
+// tool name in the title: "Agent" / "AgentSwarm" at open, then "Launching
+// <type> agent: <description>" / "Launching agent swarm: <description>" on the
+// in_progress update whose rawInput carries { prompt, description } /
+// { description, prompt_template, items } (live recordings 2026-10-23/24,
+// kimi-live.delegation.test.ts and kimi-live.swarm.test.ts). kimi sends no
+// _meta tool identity, so the title is the only identity signal.
 const KIMI_AGENT_OPEN_TITLE = "Agent";
+const KIMI_SWARM_OPEN_TITLE = "AgentSwarm";
 const KIMI_AGENT_LAUNCH_TITLE = /^Launching (\w+) agent: (.+)$/;
+const KIMI_SWARM_LAUNCH_TITLE = /^Launching agent swarm: (.+)$/;
 
-function readAgentDescription(rawInput: unknown): string | undefined {
+function readRawInputField(rawInput: unknown, field: string): unknown {
   if (typeof rawInput !== "object" || rawInput === null) {
     return undefined;
   }
-  const description = (rawInput as { description?: unknown }).description;
+  return (rawInput as Record<string, unknown>)[field];
+}
+
+function readAgentDescription(rawInput: unknown): string | undefined {
+  const description = readRawInputField(rawInput, "description");
   return typeof description === "string" && description.trim() !== ""
     ? description
     : undefined;
+}
+
+function readSwarmDetail(rawInput: unknown): string | undefined {
+  const items = readRawInputField(rawInput, "items");
+  if (!Array.isArray(items)) {
+    return undefined;
+  }
+  return `${items.length} ${items.length === 1 ? "task" : "tasks"}`;
 }
 
 function classifyKimiAgentToolCall(
@@ -28,12 +44,21 @@ function classifyKimiAgentToolCall(
   if (title === undefined) {
     return undefined;
   }
-  const launch = KIMI_AGENT_LAUNCH_TITLE.exec(title);
-  if (title !== KIMI_AGENT_OPEN_TITLE && launch === null) {
+  const agentLaunch = KIMI_AGENT_LAUNCH_TITLE.exec(title);
+  const swarmLaunch = KIMI_SWARM_LAUNCH_TITLE.exec(title);
+  const isAgent = title === KIMI_AGENT_OPEN_TITLE || agentLaunch !== null;
+  const isSwarm = title === KIMI_SWARM_OPEN_TITLE || swarmLaunch !== null;
+  if (!isAgent && !isSwarm) {
     return undefined;
   }
-  const label = readAgentDescription(event.rawInput) ?? launch?.[2] ?? title;
-  const subagentType = launch?.[1];
+  const label =
+    readAgentDescription(event.rawInput) ??
+    agentLaunch?.[2] ??
+    swarmLaunch?.[1] ??
+    title;
+  const detail = isSwarm
+    ? readSwarmDetail(event.rawInput)
+    : agentLaunch?.[1];
   return {
     item: {
       type: "delegation",
@@ -45,7 +70,7 @@ function classifyKimiAgentToolCall(
       label: { pending: "Running subagent", completed: "Subagent finished" },
       icon: { glyph: "UserRound" },
       title: label,
-      ...(subagentType === undefined ? {} : { detail: subagentType }),
+      ...(detail === undefined ? {} : { detail }),
     },
   };
 }

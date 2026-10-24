@@ -106,13 +106,15 @@ SDK зафиксирован в `host.ts`.
 - маппинг инструментов kimi (Read/Write/Edit/Bash/WebFetch/Think →
   read/edit/execute/fetch/think) покрыт generic-классификацией — по коду
   `packages/acp-server/src/events-map.ts` в MoonshotAI/kimi-code;
-- **субагенты** (инструмент `Agent`, kind `other`) — с 2026-10-23 (v0.2.7)
-  классифицируются диалектом в delegation-строки (`classifyToolCall` в
-  `src/dialect.ts`, по прецеденту grok/cursor диалектов SDK; `childRef` =
-  toolCallId, label из `rawInput.description`). Wire-шейпы запинены в
-  `dialect.test.ts` по записи `BB_PROVIDER_BRIDGE_RECORD_DIR`, end-to-end —
-  live-тест `kimi-live.delegation.test.ts`. `AgentSwarm` не пробирован —
-  остаётся generic tool-строкой;
+- **субагенты** (инструменты `Agent`, `AgentSwarm`, kind `other`) — с
+  2026-10-23 (v0.2.7) и 2026-10-24 (v0.2.9) классифицируются диалектом в
+  delegation-строки (`classifyToolCall` в `src/dialect.ts`, по прецеденту
+  grok/cursor диалектов SDK; `childRef` = toolCallId, label из
+  `rawInput.description`; Agent: detail = тип субагента из «Launching <type>
+  agent: ...», AgentSwarm: detail = число задач из `rawInput.items`). Wire-шейпы
+  запинены в `dialect.test.ts` по записям `BB_PROVIDER_BRIDGE_RECORD_DIR`,
+  end-to-end — live-тесты `kimi-live.delegation.test.ts` и
+  `kimi-live.swarm.test.ts`;
 - **AskUserQuestion** мапится kimi в ACP `session/request_permission` →
   approval с вариантами ответа в bb (по коду `acp-server/src/question.ts`);
   поэтому `supportsNativeUserQuestion: false` — вопросы работают, но не как
