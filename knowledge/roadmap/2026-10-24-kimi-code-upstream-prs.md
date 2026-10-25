@@ -153,3 +153,23 @@ issue (`/approve`) — сначала issue, потом PR**.
    существующих файлах, `pnpm lint` (check-no-comments), e2e пакета
    acp-server (`test/` — реальный engine на temp home).
 4. Никаких упоминаний AI-авторства в коммитах/PR (правило репо).
+
+# Статус отправки (2026-10-25)
+
+Issue-first трек закрыт: поданы issue с отсылками к уже открытым PR и
+заявкой на maintainer-аппрув (в телах честно указано, что PR ушли раньше
+правила). Пары issue↔PR:
+
+- PR 1 (occupied) → PR MoonshotAI/kimi-code#4372 ↔ issue #4391
+  (bug-шаблон, чекбокс contribution отмечен);
+- PR 2 (usage --json) → PR #4373 ↔ issue #4392;
+- PR 3 (plan-шаги) → PR #4374 ↔ issue #4393;
+- PR 4a (swarm-прогресс) → PR #4375 ↔ issue #4394;
+- на каждом PR оставлен комментарий-ссылка на его issue.
+
+Не отправлено: PR 4b (swarm в mode configOption), PR 5 (secondary_model
+configOption), PR 6 (video, gated), PR 7 (fork живой сессии — design-first
+issue без кода). Следующий шаг по каждому — issue по шаблону, затем ждать
+аппрува. Правило репо жёстче, чем казалось: feature-шаблон прямо говорит
+«не открывайте feature-PR, фичи решаются в issue; если принято — команда
+реализует сама или явно приглашает контрибьютить».
