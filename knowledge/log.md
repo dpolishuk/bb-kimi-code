@@ -47,8 +47,9 @@
   тесты на fork/load/resume + тест обновления корней при смене настроек живой
   сессии (CLI-выбор модели форсит restart). Mutation check: удаление проброса
   роняет соответствующие тесты. Полный turbo 541/541 + typecheck + lint,
-  коммит `3572d27`, PR body обновлён. PR автоматически закрыт
-  contributor-гейтом — реопен после одобрения через Discord #contributors.
+  коммит `3572d27`, PR body обновлён. **СМЁРЖЕН 2026-10-27** (merge
+  `f15275b`) и уже поставляется в SDK 0.6.90 — плагин обновлён до него
+  (v0.2.10, live 44/44).
 * **Вердикты проб ошибок kimi 2.3.0** (в [решении об ACP](decisions/acp-over-custom-bridge.md)):
   auth `-32000` мапится SDK в typed `authRequired` + подсказка `kimi login`;
   occupancy `-32603` без типизации (текст в `data.details`, SDK его доносит)
