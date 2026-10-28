@@ -2,6 +2,12 @@
 
 ## 2026-10-28
 
+* **Feature**: v0.2.12 — `AgentSwarm` отображается как **workflow**
+  (`backgroundTask` с `WorkflowProgressSnapshot`: фаза `Swarm`, по записи на
+  каждый элемент `rawInput.items`, состояния `queued` → `done`/`failed`).
+  `Agent` остаётся delegation-строкой. Live-проверка: workflow с двумя задачами.
+  Тесты 40/40 + typecheck, live 44/44.
+
 * **Feature**: v0.2.11 — usage/quota аккаунта поддержана **без апстрима**:
   `readUsage` напрямую через OAuth `/usages` (read-only), маппинг окон и
   booster cost, `maintenance.usage: true`. Live-проверка: реальный ответ

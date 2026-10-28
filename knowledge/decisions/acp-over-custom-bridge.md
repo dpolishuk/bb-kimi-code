@@ -106,12 +106,12 @@ SDK зафиксирован в `host.ts`.
 - маппинг инструментов kimi (Read/Write/Edit/Bash/WebFetch/Think →
   read/edit/execute/fetch/think) покрыт generic-классификацией — по коду
   `packages/acp-server/src/events-map.ts` в MoonshotAI/kimi-code;
-- **субагенты** (инструменты `Agent`, `AgentSwarm`, kind `other`) — с
-  2026-10-23 (v0.2.7) и 2026-10-24 (v0.2.9) классифицируются диалектом в
-  delegation-строки (`classifyToolCall` в `src/dialect.ts`, по прецеденту
-  grok/cursor диалектов SDK; `childRef` = toolCallId, label из
-  `rawInput.description`; Agent: detail = тип субагента из «Launching <type>
-  agent: ...», AgentSwarm: detail = число задач из `rawInput.items`). Wire-шейпы
+- **субагенты** (инструменты `Agent`, `AgentSwarm`, kind `other`) — `Agent`
+  классифицируется в delegation-строки, а `AgentSwarm` с 2026-10-28 (v0.2.12)
+  отображается как **workflow** (`backgroundTask` с `WorkflowProgressSnapshot`:
+  фаза `Swarm`, по задаче на каждый элемент `rawInput.items`, состояния
+  `queued` → `done`/`failed`). `childRef` = toolCallId, label из
+  `rawInput.description`; `AgentSwarm`: detail = число задач. Wire-шейпы
   запинены в `dialect.test.ts` по записям `BB_PROVIDER_BRIDGE_RECORD_DIR`,
   end-to-end — live-тесты `kimi-live.delegation.test.ts` и
   `kimi-live.swarm.test.ts`;
