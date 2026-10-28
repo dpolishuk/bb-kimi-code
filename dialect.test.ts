@@ -76,14 +76,102 @@ describe("the kimi ACP dialect maintenance hooks", () => {
     });
   });
 
-  it("declares usage unsupported: kimi exposes no account quota interface", async () => {
-    await expect(kimiAcpDialect.maintenance?.readUsage()).resolves.toEqual({
-      supported: false,
-    });
+  it("declares usage through the OAuth endpoint", async () => {
+    const { vi } = await import("vitest");
+    vi.stubGlobal(
+      "fetch",
+      async () => new Response(JSON.stringify({ usages: {} }), { status: 200 }),
+    );
+    try {
+      await expect(kimiAcpDialect.maintenance?.readUsage()).resolves.toEqual({
+        supported: true,
+        usage: {
+          accountEmail: null,
+          planLabel: null,
+          status: "ok",
+          windows: [],
+        },
+      });
+    } finally {
+      vi.unstubAllGlobals();
+    }
   });
 
   it("points terminal login at `kimi login`", () => {
     expect(kimiAcpDialect.maintenance?.loginCommand).toBe("kimi login");
+  });
+
+  it("maps managed quota into bb usage windows with reset times and booster cost", async () => {
+    const { readKimiUsage } = await import("./src/kimi-usage.js");
+    const result = await readKimiUsage({
+      credentials: JSON.stringify({ access_token: "token" }),
+      fetchImpl: async () =>
+        new Response(
+          JSON.stringify({
+            usages: {
+              limit_5h: { used_ratio: 0.5, reset_time: "2026-10-28T12:00:00Z" },
+              limit_7d: { used_ratio: 0.25 },
+              limit_month_total: { used_ratio: 0.1 },
+              limit_month_code: { used_ratio: 0.2 },
+            },
+            boosterWallet: {
+              balance: { type: "BOOSTER", amount: 100000, amountLeft: 50000 },
+              monthlyChargeLimit: { priceInCents: 200000, currency: "USD" },
+              monthlyUsed: { priceInCents: 50000, currency: "USD" },
+              monthlyChargeLimitEnabled: true,
+            },
+          }),
+          { status: 200 },
+        ),
+    });
+
+    expect(result.supported).toBe(true);
+    const usage = (result as { usage: { status: string; windows: unknown[] } }).usage;
+    expect(usage.status).toBe("ok");
+    expect(usage.windows).toHaveLength(5);
+    expect(usage.windows[0]).toMatchObject({
+      label: "5h limit",
+      resetsAt: "2026-10-28T12:00:00Z",
+      usedPercent: 50,
+    });
+    expect(usage.windows[4]).toMatchObject({
+      cost: { limitUsdCents: 200000, usedUsdCents: 50000 },
+    });
+  });
+
+  it("reports unauthenticated when there is no usable token", async () => {
+    const { readKimiUsage } = await import("./src/kimi-usage.js");
+    const result = await readKimiUsage({ credentials: "{}" });
+    expect(result).toEqual({ supported: true, usage: { status: "unauthenticated" } });
+  });
+
+  it("maps 401 to expired and other HTTP failures to error", async () => {
+    const { readKimiUsage } = await import("./src/kimi-usage.js");
+    const credentials = JSON.stringify({ access_token: "token" });
+    const unauthorized = await readKimiUsage({
+      credentials,
+      fetchImpl: async () => new Response("nope", { status: 401 }),
+    });
+    expect(unauthorized).toEqual({ supported: true, usage: { status: "expired" } });
+    const failure = await readKimiUsage({
+      credentials,
+      fetchImpl: async () => new Response("nope", { status: 500 }),
+    });
+    expect((failure as { usage: { status: string } }).usage.status).toBe("error");
+  });
+
+  it("maps network failures to error", async () => {
+    const { readKimiUsage } = await import("./src/kimi-usage.js");
+    const result = await readKimiUsage({
+      credentials: JSON.stringify({ access_token: "token" }),
+      fetchImpl: async () => {
+        throw new Error("offline");
+      },
+    });
+    expect((result as { usage: { status: string; message: string } }).usage).toMatchObject({
+      status: "error",
+      message: "offline",
+    });
   });
 });
 

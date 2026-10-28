@@ -27,7 +27,7 @@ export default function plugin(bb: BbPluginApi) {
       // with the kimi tile colors instead of the ambient text color.
       iconTint: { light: "#0A0A0C", dark: "#FFFFFF" },
     },
-    maintenance: { health: true, usage: false, installation: true },
+    maintenance: { health: true, usage: true, installation: true },
     capabilities: {
       supportsServiceTier: false,
       supportsNativeUserQuestion: false,

@@ -85,7 +85,7 @@ describe("the kimi-code provider declaration", () => {
   it("turns on health and installation maintenance", () => {
     expect(registeredDeclaration().maintenance).toEqual({
       health: true,
-      usage: false,
+      usage: true,
       installation: true,
     });
   });

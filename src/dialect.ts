@@ -2,6 +2,7 @@ import { experimental_downloadedInstallerCommand as downloadedInstallerCommand }
 import type { AcpClassifiedToolCall, AcpDialect, AcpToolCallUpdateEvent } from "@get-bb/plugin-sdk/provider-bridge/acp-next";
 
 import { readKimiAccountFromDisk } from "./kimi-account.js";
+import { readKimiUsage } from "./kimi-usage.js";
 
 // kimi emits its Agent and AgentSwarm tools over ACP as kind "other" with the
 // tool name in the title: "Agent" / "AgentSwarm" at open, then "Launching
@@ -97,7 +98,7 @@ export const kimiAcpDialect: AcpDialect = {
       return readKimiAccountFromDisk();
     },
     readUsage() {
-      return Promise.resolve({ supported: false as const });
+      return readKimiUsage();
     },
   },
 };
