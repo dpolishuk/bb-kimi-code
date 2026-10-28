@@ -60,6 +60,51 @@ function classifyKimiAgentToolCall(
   const detail = isSwarm
     ? readSwarmDetail(event.rawInput)
     : agentLaunch?.[1];
+  if (isSwarm) {
+    const items = readRawInputField(event.rawInput, "items");
+    const labels = Array.isArray(items) ? items.map(String) : [];
+    const taskStatus =
+      event.status === "failed"
+        ? "failed"
+        : event.status === "completed"
+          ? "completed"
+          : "running";
+    const agentState =
+      event.status === "failed"
+        ? "failed"
+        : event.status === "completed"
+          ? "done"
+          : "queued";
+    return {
+      item: {
+        type: "backgroundTask",
+        familyId: `agent-swarm-${event.toolCallId}`,
+        taskType: "agent_swarm",
+        description: label,
+        status: taskStatus === "running" ? "pending" : taskStatus,
+        taskStatus,
+        skipTranscript: false,
+        workflow: {
+          phases: [{ index: 0, title: "Swarm" }],
+          agents: labels.map((itemLabel, index) => ({
+            index,
+            label: itemLabel,
+            state: agentState,
+            attempt: 0,
+            cached: false,
+            lastProgressAt: Date.now(),
+            model: "kimi",
+          })),
+        },
+      },
+      presentation: {
+        label: { pending: "Running subagent", completed: "Subagent finished" },
+        icon: { glyph: "UserRound" },
+        title: label,
+        ...(detail === undefined ? {} : { detail }),
+      },
+    };
+  }
   return {
     item: {
       type: "delegation",

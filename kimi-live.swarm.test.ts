@@ -98,7 +98,11 @@ itLive("surfaces a kimi Agent tool call", async () => {
         const deltas = (message.params as { deltas?: Array<Record<string, unknown>> })
           .deltas ?? [];
         for (const delta of deltas) {
-          if (delta.kind === "item.open" || delta.kind === "item.close") {
+          if (
+            delta.kind === "item.open" ||
+            delta.kind === "item.close" ||
+            delta.kind === "item.update"
+          ) {
             itemEvents.push(delta);
           }
           if (delta.kind === "turn.boundary") {
@@ -108,19 +112,20 @@ itLive("surfaces a kimi Agent tool call", async () => {
       }
     }
 
-    const delegationOpen = itemEvents.find(
+    const swarmOpen = [...itemEvents].reverse().find(
       (delta) =>
-        delta.kind === "item.open" &&
-        (delta.item as { type?: string } | undefined)?.type === "delegation",
+        (delta.item as { type?: string } | undefined)?.type === "backgroundTask",
     );
     expect(
-      delegationOpen,
-      `expected a delegation item in ${JSON.stringify(itemEvents.map((delta) => (delta.item as { type?: string })?.type))}`,
+      swarmOpen,
+      `expected a backgroundTask workflow in ${JSON.stringify(itemEvents.map((delta) => (delta.item as { type?: string })?.type))}`,
     ).toBeDefined();
     expect(
-      (delegationOpen?.item as { label?: string }).label,
-      "delegation label carries the subagent task",
+      (swarmOpen?.item as { description?: string }).description,
+      "workflow description carries the subagent task",
     ).toBeTruthy();
+    const workflow = (swarmOpen?.item as { workflow?: { agents?: unknown[] } }).workflow;
+    expect(workflow?.agents?.length).toBe(2);
     expect(settled).toBe(true);
 
     // Fixture recording: BB_KIMI_FIXTURE_RECORD=<path> dumps the bridge's

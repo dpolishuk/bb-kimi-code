@@ -45,8 +45,8 @@ Everything Kimi Code exposes over ACP works in bb:
   published into bb's composer menu from the live session.
 - **Approvals** — gated by bb permission modes (`accept-edits`, `full`);
   Kimi Code's AskUserQuestion arrives as an approval with options.
-- **Subagents and swarms** — Kimi Code's `Agent` and `AgentSwarm` tool calls
-  appear on the timeline as delegation rows with the subagent's task.
+- **Subagents and swarms** — `Agent` calls appear as delegation rows;
+  `AgentSwarm` appears as a workflow with one entry per swarm item.
 - **Image input** — local images are sent as ACP image blocks.
 - **Skills** — `.kimi-code/skills` and `.agents/skills` are discovered for
   user and project roots.

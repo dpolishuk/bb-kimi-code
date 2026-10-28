@@ -239,7 +239,7 @@ describe("the kimi ACP dialect subagent classification", () => {
     ).toBeUndefined();
   });
 
-  it("classifies kimi's AgentSwarm tool call as a delegation", () => {
+  it("classifies kimi's AgentSwarm tool call as a workflow of its items", () => {
     const classified = kimiAcpDialect.classifyToolCall?.({
       sessionUpdate: "tool_call",
       toolCallId: "0:tool_4",
@@ -247,15 +247,18 @@ describe("the kimi ACP dialect subagent classification", () => {
       kind: "other",
       status: "pending",
     });
-    expect(classified?.item).toEqual({
-      type: "delegation",
-      childRef: "0:tool_4",
-      label: "AgentSwarm",
-      background: false,
+    expect(classified?.item).toMatchObject({
+      type: "backgroundTask",
+      taskStatus: "running",
+      status: "pending",
+      workflow: {
+        phases: [{ index: 0, title: "Swarm" }],
+        agents: [],
+      },
     });
   });
 
-  it("labels the swarm delegation from its description and counts the items", () => {
+  it("labels the swarm workflow from its description and items", () => {
     const classified = kimiAcpDialect.classifyToolCall?.({
       sessionUpdate: "tool_call_update",
       toolCallId: "0:tool_4",
@@ -268,13 +271,42 @@ describe("the kimi ACP dialect subagent classification", () => {
         items: ["Compute 2+2", "Compute 3+3"],
       },
     });
-    expect(classified?.item).toEqual({
-      type: "delegation",
-      childRef: "0:tool_4",
-      label: "Compute two expressions",
-      background: false,
+    expect(classified?.item).toMatchObject({
+      type: "backgroundTask",
+      description: "Compute two expressions",
+      taskStatus: "running",
+      workflow: {
+        agents: [
+          { index: 0, label: "Compute 2+2", state: "queued" },
+          { index: 1, label: "Compute 3+3", state: "queued" },
+        ],
+      },
     });
-    expect(classified?.presentation.detail).toBe("2 tasks");
+  });
+
+  it("marks every swarm item done when the swarm completes", () => {
+    const classified = kimiAcpDialect.classifyToolCall?.({
+      sessionUpdate: "tool_call_update",
+      toolCallId: "0:tool_4",
+      title: "Launching agent swarm: Compute two expressions",
+      kind: "other",
+      status: "completed",
+      rawInput: {
+        description: "Compute two expressions",
+        items: ["Compute 2+2", "Compute 3+3"],
+      },
+    });
+    expect(classified?.item).toMatchObject({
+      type: "backgroundTask",
+      taskStatus: "completed",
+      status: "completed",
+      workflow: {
+        agents: [
+          { index: 0, state: "done" },
+          { index: 1, state: "done" },
+        ],
+      },
+    });
   });
 
   it("does not confuse the Agent and AgentSwarm launch titles", () => {
