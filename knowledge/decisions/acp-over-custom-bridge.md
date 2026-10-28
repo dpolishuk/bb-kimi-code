@@ -131,10 +131,12 @@ SDK зафиксирован в `host.ts`.
 - **Video-ввод** — невозможно через ACP: в `promptCapabilities` есть только
   image/audio (kimi: image true, audio false), контент-блока видео в
   протоколе нет. Это ограничение протокола, не плагина.
-- **Usage/quota аккаунта** — у kimi нет машинного интерфейса квоты (ни CLI-
-  команды, ни поля конфигурации); `readUsage` честно возвращает
-  `{ supported: false }`, `maintenance.usage` выключен. Токены сессии
-  доступны через `/usage` в треде.
+- **Usage/quota аккаунта** — с 2026-10-28 (v0.2.11) поддерживается напрямую:
+  `readUsage` читает OAuth-токен из `~/.kimi-code/credentials/kimi-code.json`
+  и запрашивает `GET https://api.kimi.com/coding/v1/usages` (read-only).
+  Маппинг: `used_ratio` → `usedPercent`, `reset_time` → `resetsAt`, booster
+  wallet → `cost {limitUsdCents, usedUsdCents}`. `maintenance.usage: true`.
+  Токены сессии остаются доступны через `/usage` в треде.
 - **Профили агентов** (`--agent/--agent-file`), `kimi vis`, `export` —
   CLI-фичи вне ACP.
 - **MCP** — работает через собственную конфигурацию kimi (`/mcp-config`,

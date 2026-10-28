@@ -1,5 +1,12 @@
 # Directory Update Log
 
+## 2026-10-28
+
+* **Feature**: v0.2.11 — usage/quota аккаунта поддержана **без апстрима**:
+  `readUsage` напрямую через OAuth `/usages` (read-only), маппинг окон и
+  booster cost, `maintenance.usage: true`. Live-проверка: реальный ответ
+  (5h 12.2%, weekly 11.14%). Тесты 39/39 + typecheck, live 44/44.
+
 ## 2026-10-25
 
 * **Upstream**: issue-first трек для kimi-code закрыт — поданы четыре issue
@@ -23,9 +30,6 @@
   docs/setup.md. Канарейка это не ловит (models-тест пинит только лестницу K3).
 
 * **Update**: v0.2.8 — `@get-bb/plugin-sdk` 0.6.49 → 0.6.73. Gap'ы на месте
-  (fork-хардкод, auto-throw, additionalDirectories — последний закрывает наш
-  PR get-bb/bb#6180), апгрейд ради общих фиксов. Unit 32/32, live 40/40,
-  build зелёный; обёртка fork в host.ts нужна по-прежнему.
 * **Ops**: канарейка совместимости — bb-автоматизация `auto_e74usnxrvi4`
   (проект bb-kimi-code): ежедневно 07:17 Europe/Moscow гоняет полный
   live-сьют (`BB_KIMI_LIVE=1 npx vitest run`); тихий тик при зелёном,
