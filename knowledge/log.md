@@ -4,8 +4,10 @@
 
 * **Fix**: заголовки тредов больше не начинаются с `<system_instructions>` —
   плагин регистрирует AI-сервис `kimi-code` (`bb.experimental_aiServices`)
-  для генерации тайтлов отдельной `kimi acp` сессией; тайтл возвращается
-  моделью, а не fallback на начало промпта. Тесты 42/42 + typecheck.
+  с детерминированной очисткой title-промпта от harness-блоков
+  (`<system_instructions>` / `<system_reminder>`). Тесты 44/44 + typecheck.
+  Проверка end-to-end: демо-тред `thr_qeka47r4gs` получил тайтл
+  «You create concise titles for coding tasks» (без префикса).
 
 * **Feature**: v0.2.12 — `AgentSwarm` отображается как **workflow**
   (`backgroundTask` с `WorkflowProgressSnapshot`: фаза `Swarm`, по записи на
