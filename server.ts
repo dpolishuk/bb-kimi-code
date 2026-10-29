@@ -1,5 +1,8 @@
 import type { BbPluginApi } from "@get-bb/plugin-sdk";
 
+import { generateKimiTitle } from "./src/kimi-title.js";
+import { readKimiAccountFromDisk } from "./src/kimi-account.js";
+
 export const KIMI_PLUGIN_ID = "kimi-code";
 export const KIMI_PROVIDER_ID = "kimi-code";
 
@@ -73,6 +76,20 @@ export default function plugin(bb: BbPluginApi) {
         args: ["acp"],
         env: {},
       },
+    },
+  });
+
+  bb.experimental_aiServices.register({
+    id: "kimi-code",
+    displayName: "Kimi Code (local model)",
+    complete: async (prompt, options) => generateKimiTitle(prompt, options),
+    async status() {
+      const account = await readKimiAccountFromDisk();
+      if (account !== null) return { ready: true };
+      return {
+        ready: false,
+        message: "Run `kimi login` on the machine to enable title generation.",
+      };
     },
   });
 }
