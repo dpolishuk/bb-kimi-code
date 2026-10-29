@@ -2,6 +2,11 @@
 
 ## 2026-10-28
 
+* **Fix**: заголовки тредов больше не начинаются с `<system_instructions>` —
+  плагин регистрирует AI-сервис `kimi-code` (`bb.experimental_aiServices`)
+  для генерации тайтлов отдельной `kimi acp` сессией; тайтл возвращается
+  моделью, а не fallback на начало промпта. Тесты 42/42 + typecheck.
+
 * **Feature**: v0.2.12 — `AgentSwarm` отображается как **workflow**
   (`backgroundTask` с `WorkflowProgressSnapshot`: фаза `Swarm`, по записи на
   каждый элемент `rawInput.items`, состояния `queued` → `done`/`failed`).
