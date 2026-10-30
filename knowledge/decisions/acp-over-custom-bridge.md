@@ -95,8 +95,11 @@ SDK зафиксирован в `host.ts`.
   `kimi-live.session-state.test.ts`);
 - селектор mode (default/plan/auto/yolo) — публикуется как
   `bb/session-options` с `category: "mode"` (composer footer); plan mode
-  доступен через него. Прямой `composerActions: ["plan"]` не заявлен:
-  `promptMode` bridge игнорирует;
+  доступен через него. С 2026-10-30 заявлен `composerActions: ["plan"]`:
+  `mapPlanPromptMode` переводит `promptMode: "plan"` на `turn/start` в
+  `sessionOptions.mode = "plan"`, а acp-next применяет его до `runTurn` через
+  `session/set_mode`. Live-тест `kimi-live.plan-mode.test.ts` против CLI 2.3.3
+  подтверждает `bb/session-options → mode.value === "plan"`;
 - `/compact` — маппится на `session/prompt` "/compact";
 - **tool-pайплайн**: live-проверен turn с реальным Write-инструментом
   (`kimi-live.tools.test.ts`): `item.open`/`item.close` с shape

@@ -39,8 +39,9 @@ Everything Kimi Code exposes over ACP works in bb:
   `kimi-code/k3-256k`, K2.8 Preview, K2.7 Code Highspeed, and more).
 - **Thinking levels** — Low / High / Max map onto Kimi Code's `thinking`
   session option.
-- **Modes** — Default / Plan / Auto / YOLO in the composer footer, straight
-  from Kimi Code's `mode` session option.
+- **Modes and `/plan`** — Default / Plan / Auto / YOLO in the composer footer,
+  straight from Kimi Code's `mode` session option; bb's `/plan` composer action
+  enters Kimi Code's read-only plan mode before the turn.
 - **Slash commands** — `/compact`, `/status`, `/usage`, your skill commands:
   published into bb's composer menu from the live session.
 - **Approvals** — gated by bb permission modes (`accept-edits`, `full`);

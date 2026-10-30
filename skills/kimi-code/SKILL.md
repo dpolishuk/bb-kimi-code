@@ -29,8 +29,8 @@ picker maps onto kimi's thinking levels: Low / High / Max.
 - kimi's slash commands (`/compact`, `/status`, `/usage`, skill commands)
   appear in the composer's `/` menu from the live session.
 - kimi's mode selector (Default / Plan / Auto / YOLO) is published as the
-  session's `mode` option and sits in the composer footer; pick Plan there
-  for read-only planning.
+  session's `mode` option and sits in the composer footer; pick Plan there or
+  use bb's `/plan` composer action for read-only planning.
 - bb's own permission modes still gate approvals on top: `accept-edits`
   auto-approves workspace file edits, `full` approves everything. bb's
   `auto` mode is not offered — the ACP bridge cannot enforce it.

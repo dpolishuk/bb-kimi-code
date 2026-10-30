@@ -110,8 +110,8 @@ describe("the kimi-code provider declaration", () => {
     });
   });
 
-  it("declares no composer actions the generic ACP bridge would not honor", () => {
-    expect(registeredDeclaration().composerActions).toEqual([]);
+  it("declares the plan composer action that mapPlanPromptMode wires", () => {
+    expect(registeredDeclaration().composerActions).toEqual(["plan"]);
   });
 });
 

@@ -33,7 +33,7 @@ sources:
 ```
 BB_KIMI_LIVE=1 npx vitest run kimi-live.conformance.test.ts \
   kimi-live.session-state.test.ts kimi-live.maintenance.test.ts \
-  kimi-live.tools.test.ts
+  kimi-live.tools.test.ts kimi-live.plan-mode.test.ts
 ```
 
 # Шаги

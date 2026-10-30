@@ -56,10 +56,9 @@ export default function plugin(bb: BbPluginApi) {
       { id: "high", label: "Thinking High" },
       { id: "max", label: "Thinking Max" },
     ],
-    // The generic ACP bridge ignores promptMode, and bb's own ACP plugin
-    // declares no composer actions for any agent — plan mode is not wired
-    // through ACP, so we do not advertise it.
-    composerActions: [],
+    // The generic ACP bridge ignores promptMode; map it to the mode selector
+    // so bb's /plan composer action actually enters kimi's plan mode.
+    composerActions: ["plan"],
     models: { fallback: [], scope: "host" },
     experimental_nativeSkillRoots: {
       user: [".kimi-code/skills", ".agents/skills"],

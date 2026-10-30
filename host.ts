@@ -2,6 +2,7 @@ import { experimental_acpProviderBridge as acpProviderBridge, experimental_regis
 
 import { kimiAcpDialect } from "./src/dialect.js";
 import { narrowInitializeForkOnBridge } from "./src/handshake-fork.js";
+import { mapPlanPromptMode } from "./src/prompt-mode.js";
 
 registerAcpDialect(kimiAcpDialect);
 
@@ -15,4 +16,6 @@ registerAcpDialect(kimiAcpDialect);
 // declared capabilities: the SDK hardcodes `fork: "tip"` there, but kimi
 // >= 2.3.0 cannot fork live sessions cross-process, so the declaration (and
 // with this wrapper the handshake too) says `fork: "none"`.
-export const experimental_providerBridge = narrowInitializeForkOnBridge(acpProviderBridge);
+export const experimental_providerBridge = mapPlanPromptMode(
+  narrowInitializeForkOnBridge(acpProviderBridge),
+);

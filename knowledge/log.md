@@ -1,5 +1,17 @@
 # Directory Update Log
 
+## 2026-10-30
+
+* **Feature**: v0.2.14 — bb `/plan` теперь входит в read-only plan mode Kimi
+  Code: `composerActions: ["plan"]` + `mapPlanPromptMode` переводит
+  `promptMode: "plan"` на `turn/start` в `sessionOptions.mode = "plan"`;
+  acp-next применяет выбор до `runTurn` через `session/set_mode`. Live-проверка
+  против CLI 2.3.3 подтверждает `bb/session-options → mode.value === "plan"`.
+  Обновлены README, skill, architecture и [решение об ACP](decisions/acp-over-custom-bridge.md).
+  Юнит 47/47, typecheck и build зелёные; live 9 файлов, 10/10 тестов, включая
+  15 применимых conformance-правил. Live maintenance-тест приведён к
+  поддержке usage, добавленной в v0.2.11 (старый assertion ждал `supported: false`).
+
 ## 2026-10-28
 
 * **Fix**: заголовки тредов больше не начинаются с `<system_instructions>` —

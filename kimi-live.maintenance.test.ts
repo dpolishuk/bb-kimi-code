@@ -75,7 +75,18 @@ itLive("reports health, installation, and usage through the kimi dialect", async
     });
     const usage = await harness.waitForResponse(4);
     expect(usage.error).toBeUndefined();
-    expect(usage.result).toEqual({ supported: false });
+    expect(usage.result).toMatchObject({
+      supported: true,
+      usage: { status: "ok" },
+    });
+    const windows = (usage.result as {
+      usage: { windows: Array<{ label: string; usedPercent: number }> };
+    }).usage.windows;
+    expect(windows.map((window) => window.label)).toEqual(["5h limit", "Weekly limit"]);
+    for (const window of windows) {
+      expect(window.usedPercent).toBeGreaterThanOrEqual(0);
+      expect(window.usedPercent).toBeLessThanOrEqual(100);
+    }
   } finally {
     harness.restore();
   }

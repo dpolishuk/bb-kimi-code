@@ -43,7 +43,7 @@ published ACP bridge kit.
 |---|---|---|
 | `package.json` | — | Manifest (`bb` block): identity, icon, entry points, skills |
 | `server.ts` | bb server | `bb.providers.register(...)`: provider id, capabilities, strings, model catalog scope, native skill roots, `experimental_bridgeOptions` with the `acpLaunchSpec` (`kimi acp`) and `acpDialect: "kimi"` |
-| `host.ts` | host daemon | Re-exports the ACP bridge as `experimental_providerBridge`; registers the `kimi` dialect at module load |
+| `host.ts` | host daemon | Exports the ACP bridge with narrow adapters for the fork handshake and `/plan` prompt mapping; registers the `kimi` dialect at module load |
 | `src/dialect.ts` | host daemon | Kimi-specific maintenance facts: login command, install script plan, account/usage readers |
 | `src/kimi-account.ts` | host daemon | Sign-in detection: OAuth credential file or a provider `api_key` in `config.toml` |
 | `icons/kimi.svg` | bb server | Provider mark, served hashed and tinted `currentColor` |
