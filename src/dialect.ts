@@ -2,6 +2,7 @@ import { experimental_downloadedInstallerCommand as downloadedInstallerCommand }
 import type { AcpClassifiedToolCall, AcpDialect, AcpToolCallUpdateEvent } from "@get-bb/plugin-sdk/provider-bridge/acp-next";
 
 import { readKimiAccountFromDisk } from "./kimi-account.js";
+import { createKimiCommandNormalizer } from "./kimi-command-echo.js";
 import { readKimiUsage } from "./kimi-usage.js";
 
 // kimi emits its Agent and AgentSwarm tools over ACP as kind "other" with the
@@ -131,6 +132,7 @@ function classifyKimiAgentToolCall(
 export const kimiAcpDialect: AcpDialect = {
   id: "kimi",
   classifyToolCall: classifyKimiAgentToolCall,
+  normalizeCommandEvent: createKimiCommandNormalizer(),
   maintenance: {
     loginCommand: "kimi login",
     installer() {

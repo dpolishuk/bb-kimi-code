@@ -1,5 +1,23 @@
 # Directory Update Log
 
+## 2026-10-31
+
+* **Fix**: v0.2.15 — у Bash-тулколлов bb больше не показывает сырой JSON
+  аргументов в выводе команды. По живой записи kimi acp 2.4.1
+  (`BB_PROVIDER_BRIDGE_RECORD_DIR`): аргументы стримятся кумулятивными
+  JSON-снапшотами в ACP content text, затем in_progress-апдейт несёт rawInput
+  с `content === JSON.stringify(rawInput)`, и только после него начинается
+  реальный вывод (с rawOutput). Диалект реализует штатный хук
+  `normalizeCommandEvent` (`src/kimi-command-echo.ts`): content-снапшоты до
+  rawInput подавляются, точное echo на переходе и на close вырезается, фаза
+  хранится per toolCallId и сбрасывается на terminal-статусе. Проверки:
+  51/51 + typecheck + `bb plugin build`; live end-to-end (2 Bash-команды,
+  12 echo-апдейтов в сыром потоке) — 0 утечек в исходящие дельты, реальный
+  вывод, включая JSON-вывод команды, проходит без потерь. Ограничение:
+  progress-JSON у Agent и прочих не-command тулколлов остаётся — в диалекте
+  нет хука для их progress-текста, нужна точка в bb core
+  (`packages/provider-bridge-acp`, `extractAcpToolCallOutputText`).
+
 ## 2026-10-30
 
 * **Feature**: v0.2.14 — bb `/plan` теперь входит в read-only plan mode Kimi
@@ -11,6 +29,19 @@
   Юнит 47/47, typecheck и build зелёные; live 9 файлов, 10/10 тестов, включая
   15 применимых conformance-правил. Live maintenance-тест приведён к
   поддержке usage, добавленной в v0.2.11 (старый assertion ждал `supported: false`).
+
+* **Incident**: утечка `<system_instructions>` в заголовки продолжилась
+  **после** фикса 2026-10-28 — треды `thr_8kgk8fxir6` и `thr_44hebcy664`
+  (созданы 2026-10-30) получили сырые заголовки. Лог треда показывает
+  `thread/name/updated` (seq 9, сразу после `turn/input/accepted`) с именем от
+  harness-конверта: это provider-reported имя сессии (kimi называет сессию по
+  первому промпту, который bb шлёт с инъецированным envelope), а **не** путь
+  `experimental_aiServices` — санитайзер из deeeac7 его не покрывает.
+  Заголовки исправлены вручную через `bb thread update --title`. Плагинного
+  хука для очистки provider-reported имён нет (диалект ACP имена не
+  обрабатывает) — нужен фикс в bb core (санитизация `thread/name/updated`)
+  или в kimi CLI (не называть сессию по сырому промпту).
+>>>>>>> Stashed changes
 
 ## 2026-10-28
 

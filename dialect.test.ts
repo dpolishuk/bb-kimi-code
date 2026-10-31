@@ -175,6 +175,86 @@ describe("the kimi ACP dialect maintenance hooks", () => {
   });
 });
 
+describe("the kimi ACP dialect command output normalization", () => {
+  // Event shapes below are copied from the live recording of kimi acp 2.4.1
+  // (BB_PROVIDER_BRIDGE_RECORD_DIR probe, 2026-10-31): a Bash call streams
+  // cumulative argument-JSON snapshots as content text, then an in_progress
+  // update carries rawInput with content === JSON.stringify(rawInput), and
+  // only afterwards the real command output arrives (with rawOutput).
+  const normalize = (event: Parameters<NonNullable<typeof kimiAcpDialect.normalizeCommandEvent>>[0]) =>
+    kimiAcpDialect.normalizeCommandEvent?.(event) ?? event;
+
+  const argsSnapshot = (text: string, toolCallId = "0:tool_bash1") => ({
+    sessionUpdate: "tool_call_update" as const,
+    toolCallId,
+    status: "in_progress" as const,
+    content: [{ type: "content" as const, content: { type: "text" as const, text } }],
+  });
+
+  it("strips cumulative argument-JSON snapshots before rawInput arrives", () => {
+    const normalized = normalize(argsSnapshot('{"command": "echo hello-probe"'));
+    expect(normalized.content).toBeUndefined();
+  });
+
+  it("strips the exact argument echo on the update that carries rawInput", () => {
+    const rawInput = { command: "echo hello-probe" };
+    const normalized = normalize({
+      ...argsSnapshot(JSON.stringify(rawInput)),
+      title: "Running: echo hello-probe",
+      kind: "execute",
+      rawInput,
+    });
+    expect(normalized.content).toBeUndefined();
+    expect(normalized.rawInput).toEqual(rawInput);
+  });
+
+  it("passes real output through once rawInput was seen, even without rawInput on the event", () => {
+    const rawInput = { command: "echo hello-probe" };
+    normalize({ ...argsSnapshot(JSON.stringify(rawInput)), rawInput });
+    const output = argsSnapshot("hello-probe\n");
+    expect(normalize(output)).toEqual(output);
+  });
+
+  it("keeps real JSON command output at close", () => {
+    const rawInput = { command: "printf '{\"issues\":[1,2]}\\n'" };
+    const completed = {
+      ...argsSnapshot('{"issues":[1,2]}\n'),
+      status: "completed" as const,
+      rawInput,
+      rawOutput: '{"issues":[1,2]}\n',
+    };
+    expect(normalize(completed)).toEqual(completed);
+  });
+
+  it("strips a close whose only content is the argument echo", () => {
+    const rawInput = { command: "true" };
+    const completed = {
+      ...argsSnapshot(JSON.stringify(rawInput)),
+      status: "completed" as const,
+      rawInput,
+    };
+    expect(normalize(completed).content).toBeUndefined();
+  });
+
+  it("tracks argument echo state per tool call", () => {
+    const first = { command: "echo one" };
+    normalize({ ...argsSnapshot(JSON.stringify(first), "0:tool_a"), rawInput: first });
+    // A different call is still in its argument-streaming phase.
+    expect(normalize(argsSnapshot('{"command": "echo two', "0:tool_b")).content).toBeUndefined();
+    // While the first call already passes real output through.
+    const output = argsSnapshot("one\n", "0:tool_a");
+    expect(normalize(output)).toEqual(output);
+  });
+
+  it("resets the echo state after a terminal update", () => {
+    const rawInput = { command: "echo hello-probe" };
+    const id = "0:tool_reset";
+    normalize({ ...argsSnapshot(JSON.stringify(rawInput), id), rawInput });
+    normalize({ ...argsSnapshot("hello-probe\n", id), status: "completed" as const, rawOutput: "hello-probe\n" });
+    expect(normalize(argsSnapshot('{"command": "echo again', id)).content).toBeUndefined();
+  });
+});
+
 describe("the kimi ACP dialect subagent classification", () => {
   // Event shapes below are copied from the live recording of kimi acp 2.3.0
   // (/tmp probe, 2026-10-23, kimi-live.delegation.test.ts): the Agent tool
