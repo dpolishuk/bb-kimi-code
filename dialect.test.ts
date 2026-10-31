@@ -255,6 +255,47 @@ describe("the kimi ACP dialect command output normalization", () => {
   });
 });
 
+describe("the kimi ACP dialect tool call event normalization (non-command)", () => {
+  // Event shapes mirror the Agent call in recordings/agent-delegation.ndjson:
+  // argument snapshots stream as content text, the rawInput transition echoes
+  // JSON.stringify(rawInput), and the real result only arrives afterwards.
+  const normalize = (event: Parameters<NonNullable<typeof kimiAcpDialect.normalizeToolCallEvent>>[0]) =>
+    kimiAcpDialect.normalizeToolCallEvent?.(event) ?? event;
+
+  const agentSnapshot = (text: string, toolCallId = "0:tool_agent1") => ({
+    sessionUpdate: "tool_call_update" as const,
+    toolCallId,
+    status: "in_progress" as const,
+    content: [{ type: "content" as const, content: { type: "text" as const, text } }],
+  });
+
+  it("strips Agent argument snapshots before rawInput arrives", () => {
+    expect(normalize(agentSnapshot('{"prompt": "Compute')).content).toBeUndefined();
+  });
+
+  it("strips the exact argument echo on the Agent launch update", () => {
+    const rawInput = { prompt: "Compute 2+2", description: "Compute simple arithmetic" };
+    const normalized = normalize({
+      ...agentSnapshot(JSON.stringify(rawInput)),
+      title: "Launching coder agent: Compute simple arithmetic",
+      kind: "other",
+      rawInput,
+    });
+    expect(normalized.content).toBeUndefined();
+    expect(normalized.rawInput).toEqual(rawInput);
+  });
+
+  it("passes the subagent result at close", () => {
+    const rawInput = { prompt: "Compute 2+2", description: "Compute simple arithmetic" };
+    const completed = {
+      ...agentSnapshot("2"),
+      status: "completed" as const,
+      rawInput,
+    };
+    expect(normalize(completed)).toEqual(completed);
+  });
+});
+
 describe("the kimi ACP dialect subagent classification", () => {
   // Event shapes below are copied from the live recording of kimi acp 2.3.0
   // (/tmp probe, 2026-10-23, kimi-live.delegation.test.ts): the Agent tool

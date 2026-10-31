@@ -3,8 +3,10 @@ import type { AcpToolCallUpdateEvent } from "@get-bb/plugin-sdk/provider-bridge/
 // kimi acp streams tool call arguments as cumulative JSON snapshots in the ACP
 // content text until an in_progress update carries rawInput with
 // content === JSON.stringify(rawInput). Real output only starts afterwards,
-// so earlier snapshots are argument echo, not command output. Phase is tracked
-// per toolCallId and cleared on terminal updates.
+// so earlier snapshots are argument echo, not tool output. Phase is tracked
+// per toolCallId and cleared on terminal updates. The same normalizer serves
+// normalizeCommandEvent (command output) and normalizeToolCallEvent (progress
+// text of every other tool, e.g. Agent delegations).
 
 function readContentText(event: AcpToolCallUpdateEvent): string | undefined {
   for (const part of event.content ?? []) {
@@ -24,10 +26,10 @@ function withoutContent(event: AcpToolCallUpdateEvent): AcpToolCallUpdateEvent {
   return rest;
 }
 
-export function createKimiCommandNormalizer() {
+export function createKimiToolCallNormalizer() {
   const outputStarted = new Set<string>();
 
-  return function normalizeCommandEvent(
+  return function normalizeToolCallEvent(
     event: AcpToolCallUpdateEvent,
   ): AcpToolCallUpdateEvent {
     const text = readContentText(event);

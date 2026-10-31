@@ -2,6 +2,20 @@
 
 ## 2026-10-31
 
+* **Feature (pending release)**: v0.2.16 — тот же echo-фильтр покрывает Agent и
+  все не-command тулколлы через новый штатный хук `normalizeToolCallEvent`.
+  Хук добавлен в bb core: issue get-bb/bb#6768, PR get-bb/bb#6769
+  (`AcpDialect.normalizeToolCallEvent` применяется перед
+  `extractAcpToolCallOutputText` на progress-пути и в `genericCloseFields`;
+  568/568 + 410/410 тесты bb). В плагине один нормализатор
+  (`src/kimi-tool-call-echo.ts`, переименован из `kimi-command-echo.ts`)
+  обслуживает оба хука с общим per-toolCallId состоянием. Live end-to-end на
+  локально собранном SDK 0.6.110: Agent + Bash, 32 echo-апдейта в сыром
+  потоке → 0 утечек в дельты, результаты сабагента и команд проходят.
+  Unit 57/57 + typecheck + build. **Релиз ждёт** публикации
+  `@get-bb/plugin-sdk@0.6.110` (merge PR → nightly publish); после этого
+  `npm install` для регенерации lockfile, merge в main, тег.
+
 * **Fix**: v0.2.15 — у Bash-тулколлов bb больше не показывает сырой JSON
   аргументов в выводе команды. По живой записи kimi acp 2.4.1
   (`BB_PROVIDER_BRIDGE_RECORD_DIR`): аргументы стримятся кумулятивными
