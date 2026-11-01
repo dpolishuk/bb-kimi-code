@@ -140,6 +140,14 @@ SDK зафиксирован в `host.ts`.
   Маппинг: `used_ratio` → `usedPercent`, `reset_time` → `resetsAt`, booster
   wallet → `cost {limitUsdCents, usedUsdCents}`. `maintenance.usage: true`.
   Токены сессии остаются доступны через `/usage` в треде.
+- **Quota guard на turn/start** — с 2026-11-01 (v0.2.16): при исчерпанном окне
+  (used_ratio ≥ 1 и reset в будущем) обёртка `gateQuotaExhaustedTurns` в
+  host.ts отклоняет turn/start типизированной ошибкой `rateLimited` с меткой
+  окна и временем сброса, не отправляя промпт в kimi. Причина: acp-server
+  отвечает на 429 пустым `end_turn` без update'ов (см. инцидент
+  2026-11-01-kimi-quota-silent-turns). Fail-open: эндпоинт недоступен,
+  статус не ok, reset прошёл или отсутствует, таймаут 2.5 c. Отключение:
+  `BB_KIMI_QUOTA_GATE=0` (в тестах — vitest.setup.ts).
 - **Профили агентов** (`--agent/--agent-file`), `kimi vis`, `export` —
   CLI-фичи вне ACP.
 - **MCP** — работает через собственную конфигурацию kimi (`/mcp-config`,

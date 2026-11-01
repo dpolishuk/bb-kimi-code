@@ -51,12 +51,16 @@ Everything Kimi Code exposes over ACP works in bb:
 - **Image input** — local images are sent as ACP image blocks.
 - **Skills** — `.kimi-code/skills` and `.agents/skills` are discovered for
   user and project roots.
-- **Maintenance** — sign-in detection (`kimi login` hints), and installing
-  Kimi Code from bb on a host where it is missing.
+- **Maintenance** — sign-in detection (`kimi login` hints), account usage
+  windows (5h / weekly / monthly / booster) from Kimi's usage endpoint, and
+  installing Kimi Code from bb on a host where it is missing.
+- **Quota guard** — when a usage window is fully spent, new turns fail fast
+  with a rate-limit error naming the window and its reset time instead of
+  Kimi's silent empty turn (`BB_KIMI_QUOTA_GATE=0` disables the guard).
 
 Known limits (protocol- or product-level, not plugin bugs): no video input
-(ACP has no video content block), no account quota display (Kimi Code exposes
-no usage API), and MCP servers are configured by Kimi Code itself.
+(ACP has no video content block), and MCP servers are configured by Kimi Code
+itself.
 
 ## Requirements
 

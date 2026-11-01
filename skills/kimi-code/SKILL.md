@@ -47,3 +47,15 @@ picker maps onto kimi's thinking levels: Low / High / Max.
 - Thread archive and rename are not mirrored into kimi sessions.
 - MCP servers come from kimi's own configuration (`/mcp-config`, config.toml),
   not from bb.
+
+## Quota exhaustion
+
+When the account's usage window is fully spent (the weekly 7-day window most
+often), kimi's ACP server answers prompts with a bare `end_turn` and no
+updates — the 429 never reaches the wire, so without the guard the thread
+shows "The agent ended the turn without replying" and nothing else. The
+plugin guards this: while a window is 100% used, a new turn fails immediately
+with a typed rate-limit error naming the spent window and its reset time
+(check the usage windows on the provider card). The guard reads the same
+usage endpoint as the maintenance panel, fails open when the endpoint is
+unreachable or stale, and `BB_KIMI_QUOTA_GATE=0` turns it off.
