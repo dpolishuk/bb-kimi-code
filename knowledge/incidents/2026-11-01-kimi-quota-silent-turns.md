@@ -80,6 +80,14 @@ acp-server kimi должен сообщать о неудаче turn'а: либ�
 которую кит сможет перевести в recovery hint. Материал для issue в
 MoonshotAI/kimi-code (дополнить к [PR-плану](../roadmap/2026-10-24-kimi-code-upstream-prs.md)).
 
+*(Обновление 2026-11-02: в канарейке 2.5.0 вошёл #4541 «fix: queue ACP
+requests until startup completes» — вероятный апстрим-фикс второго режима
+(мгновенный пустой ответ при ещё идущем старте, работа приезжает асинхронно
+как `acp/fs/write`). Проверить режим на 2.5.0 stable; quota-gate от этого не
+зависит — он закрывает именно невидимость 429. Повторная проба промпта
+2026-11-02 на 2.4.1: квота ещё исчерпана, silent `end_turn` воспроизводится,
+`llm.request → step.end finishReason:"error"` в wire.jsonl сессии.)*
+
 ## Sources
 
 - Лог треда thr_69426gk5e4 (`bb thread log --all --json`), события 7210–7636.

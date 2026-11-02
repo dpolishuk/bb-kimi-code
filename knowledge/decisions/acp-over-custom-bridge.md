@@ -245,6 +245,46 @@ ACP-инструментов не содержат. Что изменилось 
   пользователя (`formatAgentError`), так что причина видна как есть.
   Rate limit живьём не форсировали.
 
+## Аудит-дельта против kimi 2.4.1 (2026-11-02, live-проба поверхности)
+
+Сводка аудита покрытия после релизов 2.3.1–2.4.1 (чейнджлоги GitHub +
+живая проба initialize/session/new на 2.4.1, без промптов).
+
+- **ACP-поверхность не изменилась**: agentCapabilities идентичны аудиту
+  2.3.x (loadSession; image true / audio false / embeddedContext true;
+  session list/resume/close/delete/fork/additionalDirectories; mcp
+  http/sse; auth logout). Новой функциональности, требующей диалекта, нет.
+- **Модельный каталог**: + `kimi-code/k3.1-pro`,
+  + `kimi-code/k3.1-pro-highspeed` (итог: kimi-for-coding «K2.8 Preview»,
+  kimi-for-coding-highspeed «K2.7», k3, k3-256k, k3.1-pro,
+  k3.1-pro-highspeed). Пикер плагина data-driven от configOptions/model/list —
+  поддержки не требуется; per-model thinking подтверждён live-тестом моделей
+  на 2.4.1 (зелёный).
+- **Команды** (available_commands_update): новые встроенные
+  `check-kimi-code-docs`, `import-from-cc-codex` (= /import-sessions из
+  2.4.0), `mcp-config`, `sub-skill`, `sub-skill.consolidate`,
+  `sub-skill.review`, `update-config`, `write-goal` — автоматически
+  публикуются в composer bb, изменений плагина не нужно.
+- **2.4.0, влияющее на поведение**: сессии выгружаются из памяти после 30 мин
+  простоя и прозрачно резюмятся — объясняет респавн kimi-процесса на каждый
+  turn в живых тредах; для плагина прозрачно (session/load). «Агент больше не
+  может сам входить в Plan mode» — наш /plan клиентский (session/set_mode до
+  turn), не влияет; live-тест plan-mode зелёный на 2.3.3, перепроверить на
+  2.4.1 после сброса квоты.
+- **2.4.x, не влияющее**: read-cap 100k символов (внутреннее агента, настройка
+  config.toml `[read] max_chars`); Ctrl-O/OSC 7501//import-sessions/TUI —
+  вне ACP; tower concurrency — внутреннее.
+- **Fork**: 2.3.1 добавил `KIMI_CODE_SESSION_LOCK=0`; live-проба 2026-11-02
+  подтверждает, что кросс-процессный `session/fork` живой сессии с ним
+  работает (даже выставленный только форкающему процессу). Решение
+  `fork: "none"` остаётся — причины и условия возврата в
+  [аддендуме инцидента](../incidents/2026-10-22-kimi-23-session-lock-breaks-fork.md).
+- **Канарейка 2.5.0** (следить): #4541 «queue ACP requests until startup
+  completes» — вероятный фикс режима мгновенного пустого ответа (см.
+  [квота-инцидент](../incidents/2026-11-01-kimi-quota-silent-turns.md));
+  remote environments SSH/Docker (phase 1), merge skills across workspace
+  directories — пока без ACP-поверхности.
+
 [^swarm-dump]: Live-дамп provider-commands/session-options против kimi acp 2.3.0 (in-process bridge, thread/start без промпта), 2026-10-22; сверка с llms-full.txt moonshotai.github.io/kimi-code
 
 [^audit-23]: Свежие пробы handshake/session/new против kimi 2.3.0 и сверка с релиз-нотами, 2026-10-22

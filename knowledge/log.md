@@ -1,5 +1,29 @@
 # Directory Update Log
 
+## 2026-11-02 (аудит покрытия kimi 2.3.1–2.4.1)
+
+* **Audit**: изменений плагина не требуется — вся новая поверхность kimi
+  2.3.1–2.4.1 либо уже поддерживается автоматически, либо вне ACP. Живая
+  проба 2.4.1 (initialize/session/new без промптов): capabilities идентичны,
+  +модели k3.1-pro/k3.1-pro-highspeed (пикер data-driven; live-тест моделей
+  зелёный), +команды check-kimi-code-docs / import-from-cc-codex /
+  mcp-config / sub-skill* / update-config / write-goal (авто-публикация в
+  composer). Дельта и вердикты — в
+  [решении об ACP](decisions/acp-over-custom-bridge.md), секция
+  «Аудит-дельта против kimi 2.4.1». README: список моделей актуализирован.
+* **Update (fork)**: 2.3.1 добавил `KIMI_CODE_SESSION_LOCK=0`; live-проба
+  2026-11-02 — кросс-процессный `session/fork` живой сессии с ним работает.
+  Решение `fork: "none"` оставлено (риск torn-копии при mid-turn fork);
+  аддендум и условия возврата — в
+  [инциденте](incidents/2026-10-22-kimi-23-session-lock-breaks-fork.md).
+* **Update (квота)**: промпт-проба 2026-11-02 — квота ещё исчерпана
+  (сброс 2026-11-02T16:58:56Z), silent `end_turn` воспроизводится; в канарейке
+  2.5.0 #4541 (queue ACP requests until startup completes) — вероятный фикс
+  асинхронного режима; заметка в
+  [квота-инциденте](incidents/2026-11-01-kimi-quota-silent-turns.md). Полный
+  live-набор — по-прежнему хвост после сброса квоты (включая plan-mode на
+  2.4.1).
+
 ## 2026-11-01
 
 * **Incident + Fix**: v0.2.16 — треды kimi-code «падают пустотой» при

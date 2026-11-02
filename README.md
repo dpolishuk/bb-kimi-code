@@ -36,7 +36,8 @@ Everything Kimi Code exposes over ACP works in bb:
 - **Tool calls on the timeline** — file edits, commands, searches and reads
   render as native bb rows (live-verified with a real file-writing turn).
 - **Model picker** — the models Kimi Code reports (`kimi-code/k3`,
-  `kimi-code/k3-256k`, K2.8 Preview, K2.7 Code Highspeed, and more).
+  `kimi-code/k3-256k`, `kimi-code/k3.1-pro`, `kimi-code/k3.1-pro-highspeed`,
+  K2.8 Preview, K2.7 Code Highspeed, and more — as of CLI 2.4.1).
 - **Thinking levels** — Low / High / Max map onto Kimi Code's `thinking`
   session option.
 - **Modes and `/plan`** — Default / Plan / Auto / YOLO in the composer footer,
