@@ -1,5 +1,21 @@
 # Directory Update Log
 
+## 2026-11-06
+
+* **Fix + compatibility (v0.2.17)**: у delegation Agent больше не отображается сырой JSON
+  аргументов. В треде `thr_jpqnmhht9f` (события 447–449) generic
+  `item/toolCall/progress` содержал `{description, prompt, subagent_type, ...}`:
+  SDK 0.6.90 не имел normalization-хука для не-command tool calls. SDK обновлён
+  до 0.6.116, где доступен хук из
+  [get-bb/bb#6769](https://github.com/get-bb/bb/pull/6769);
+  `normalizeKimiToolCallEvent` отфильтровывает snapshots и точный argument echo
+  по `mergedCall.rawInput`, сохраняя реальные progress/result. RED: 2 failing
+  tests; GREEN: dialect 31/31. Полный набор **78/78** прошёл отдельно на
+  **kimi 2.4.1** и **2.5.0** (19 файлов, unit + live); typecheck и build
+  зелёные. Подробности и границы — в
+  [решении об ACP](decisions/acp-over-custom-bridge.md). Исторические события
+  таймлайна не изменяются, fix применяется к новым вызовам.
+
 ## 2026-11-02 (аудит покрытия kimi 2.3.1–2.4.1)
 
 * **Audit**: изменений плагина не требуется — вся новая поверхность kimi

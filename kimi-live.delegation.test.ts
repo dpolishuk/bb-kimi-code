@@ -7,10 +7,10 @@ import { afterEach, beforeEach, expect, it } from "vitest";
 
 // Live integration test: a real turn that forces kimi to call its Agent tool
 // and asserts the subagent surfaces as a delegation item (not a generic tool
-// row). Spends model tokens, so it runs only when BB_KIMI_LIVE=1 is set
-// explicitly. Set BB_PROVIDER_BRIDGE_RECORD_DIR to also record the raw ACP
-// child IO — that recording is the source of the event shapes pinned in
-// dialect.test.ts.
+// row) without argument JSON in progress. Spends model tokens, so it runs only
+// when BB_KIMI_LIVE=1 is set explicitly. BB_KIMI_COMMAND selects a specific
+// binary; BB_KIMI_HOST_ENTRY=./dist/host.js tests the built artifact. Set
+// BB_PROVIDER_BRIDGE_RECORD_DIR to record raw ACP child IO for dialect.test.ts.
 const LIVE = process.env.BB_KIMI_LIVE === "1";
 const itLive = LIVE ? it : it.skip;
 
@@ -33,7 +33,7 @@ const OPTIONS = {
     acpDialect: "kimi",
     acpLaunchSpec: {
       displayName: "Kimi Code",
-      command: "kimi",
+      command: process.env.BB_KIMI_COMMAND ?? "kimi",
       args: ["acp"],
       env: {},
     },
@@ -41,7 +41,11 @@ const OPTIONS = {
 };
 
 itLive("surfaces a kimi Agent tool call", async () => {
-  const { experimental_providerBridge: bridge } = await import("./host.js");
+  const { experimental_providerBridge: bridge } =
+    process.env.BB_KIMI_HOST_ENTRY === "./dist/host.js"
+      // @ts-expect-error The built bundle does not ship type declarations.
+      ? await import("./dist/host.js")
+      : await import("./host.js");
   const harness = createBridgeJsonRpcTestHarness(bridge.handleLine);
   try {
     harness.sendRequest(1, "initialize", {
@@ -98,7 +102,7 @@ itLive("surfaces a kimi Agent tool call", async () => {
         const deltas = (message.params as { deltas?: Array<Record<string, unknown>> })
           .deltas ?? [];
         for (const delta of deltas) {
-          if (delta.kind === "item.open" || delta.kind === "item.close") {
+          if (["item.open", "item.close", "item.progress"].includes(delta.kind as string)) {
             itemEvents.push(delta);
           }
           if (delta.kind === "turn.boundary") {
@@ -121,6 +125,17 @@ itLive("surfaces a kimi Agent tool call", async () => {
       (delegationOpen?.item as { label?: string }).label,
       "delegation label carries the subagent task",
     ).toBeTruthy();
+    const delegationKey = (delegationOpen?.key as { providerItemId?: string } | undefined)
+      ?.providerItemId;
+    const argumentProgress = itemEvents.filter(
+      (delta) =>
+        delta.kind === "item.progress" &&
+        (delta.key as { providerItemId?: string } | undefined)?.providerItemId === delegationKey &&
+        typeof delta.message === "string" &&
+        delta.message.includes('"prompt"') &&
+        delta.message.includes('"description"'),
+    );
+    expect(argumentProgress, "Agent argument JSON must not reach bb progress").toEqual([]);
     expect(settled).toBe(true);
 
     // Fixture recording: BB_KIMI_FIXTURE_RECORD=<path> dumps the bridge's

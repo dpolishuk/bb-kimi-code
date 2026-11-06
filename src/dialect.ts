@@ -2,7 +2,7 @@ import { experimental_downloadedInstallerCommand as downloadedInstallerCommand }
 import type { AcpClassifiedToolCall, AcpDialect, AcpToolCallUpdateEvent } from "@get-bb/plugin-sdk/provider-bridge/acp-next";
 
 import { readKimiAccountFromDisk } from "./kimi-account.js";
-import { createKimiCommandNormalizer } from "./kimi-command-echo.js";
+import { createKimiCommandNormalizer, normalizeKimiToolCallEvent } from "./kimi-command-echo.js";
 import { readKimiUsage } from "./kimi-usage.js";
 
 // kimi emits its Agent and AgentSwarm tools over ACP as kind "other" with the
@@ -127,12 +127,13 @@ function classifyKimiAgentToolCall(
 //   there is no official npm package for the 2.x single-binary CLI.
 // - account: OAuth credentials or a configured provider api_key prove
 //   sign-in; no email is readable locally (the JWT carries no email claim).
-// - usage: kimi exposes no account quota interface (no CLI command, no config
-//   field); session token usage stays available in-thread via /usage.
+// - usage: account quota comes from the OAuth endpoint in kimi-usage.ts;
+//   session token usage stays available in-thread via /usage.
 export const kimiAcpDialect: AcpDialect = {
   id: "kimi",
   classifyToolCall: classifyKimiAgentToolCall,
   normalizeCommandEvent: createKimiCommandNormalizer(),
+  normalizeToolCallEvent: normalizeKimiToolCallEvent,
   maintenance: {
     loginCommand: "kimi login",
     installer() {

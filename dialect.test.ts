@@ -181,8 +181,9 @@ describe("the kimi ACP dialect command output normalization", () => {
   // cumulative argument-JSON snapshots as content text, then an in_progress
   // update carries rawInput with content === JSON.stringify(rawInput), and
   // only afterwards the real command output arrives (with rawOutput).
-  const normalize = (event: Parameters<NonNullable<typeof kimiAcpDialect.normalizeCommandEvent>>[0]) =>
-    kimiAcpDialect.normalizeCommandEvent?.(event) ?? event;
+  type CommandEvent = Parameters<NonNullable<typeof kimiAcpDialect.normalizeCommandEvent>>[0];
+  const normalize = (event: CommandEvent, call: CommandEvent = event) =>
+    kimiAcpDialect.normalizeCommandEvent?.(event, call) ?? event;
 
   const argsSnapshot = (text: string, toolCallId = "0:tool_bash1") => ({
     sessionUpdate: "tool_call_update" as const,
@@ -252,6 +253,53 @@ describe("the kimi ACP dialect command output normalization", () => {
     normalize({ ...argsSnapshot(JSON.stringify(rawInput), id), rawInput });
     normalize({ ...argsSnapshot("hello-probe\n", id), status: "completed" as const, rawOutput: "hello-probe\n" });
     expect(normalize(argsSnapshot('{"command": "echo again', id)).content).toBeUndefined();
+  });
+});
+
+describe("the kimi ACP dialect subagent progress normalization", () => {
+  type ToolEvent = Parameters<NonNullable<typeof kimiAcpDialect.normalizeCommandEvent>>[0];
+  const normalize = (event: ToolEvent, call: ToolEvent = event) =>
+    (kimiAcpDialect as typeof kimiAcpDialect & {
+      normalizeToolCallEvent?: (update: ToolEvent, call: ToolEvent) => ToolEvent;
+    }).normalizeToolCallEvent?.(event, call) ?? event;
+  const rawInput = {
+    description: "Разобрать рендер штатного HUD",
+    subagent_type: "explore",
+    run_in_background: true,
+    prompt: "Inspect the HUD renderer",
+  };
+  const agentUpdate = (text: string) => ({
+    sessionUpdate: "tool_call_update" as const,
+    toolCallId: "9:tool_agent",
+    title: "Agent",
+    kind: "other" as const,
+    status: "in_progress" as const,
+    content: [{ type: "content" as const, content: { type: "text" as const, text } }],
+  });
+
+  it("strips partial Agent argument JSON before rawInput arrives", () => {
+    const event = agentUpdate(JSON.stringify(rawInput).slice(0, 100));
+    expect(normalize(event).content).toBeUndefined();
+  });
+
+  it("strips the exact Agent argument echo using the merged call rawInput", () => {
+    const event = agentUpdate(JSON.stringify(rawInput));
+    expect(normalize(event, { ...event, rawInput }).content).toBeUndefined();
+  });
+
+  it("passes real progress after rawInput even when the update omits it", () => {
+    const event = agentUpdate("Subagent finished the inspection");
+    expect(normalize(event, { ...event, rawInput })).toEqual(event);
+  });
+
+  it("keeps a real JSON result when the Agent call closes", () => {
+    const event = {
+      ...agentUpdate('{"summary":"done"}'),
+      status: "completed" as const,
+      rawInput,
+      rawOutput: '{"summary":"done"}',
+    };
+    expect(normalize(event)).toEqual(event);
   });
 });
 

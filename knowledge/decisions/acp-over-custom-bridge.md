@@ -285,6 +285,30 @@ ACP-инструментов не содержат. Что изменилось 
   remote environments SSH/Docker (phase 1), merge skills across workspace
   directories — пока без ACP-поверхности.
 
+## Erratum: generic progress Agent содержал JSON аргументов (2026-11-06)
+
+Аудит 2.4.1 выше проверял handshake, модели и команды, но не покрывал generic
+`tool_call_update`. В треде `thr_jpqnmhht9f` (события 447–449) delegation Agent
+получал `item/toolCall/progress` с кумулятивным JSON `{description, prompt,
+subagent_type, ...}`. В SDK 0.6.90 `extractAcpToolCallOutputText` отправлял этот
+текст в `item.progress`, а диалектный фильтр существовал только для command.
+
+Для generic progress добавлен upstream-хук в
+[get-bb/bb#6769](https://github.com/get-bb/bb/pull/6769), доступный в SDK
+0.6.116. Плагин обновлён с 0.6.90 до 0.6.116 и регистрирует
+`normalizeKimiToolCallEvent`: неполные снапшоты до `rawInput` и точный
+`JSON.stringify(call.rawInput)` подавляются; реальные progress и terminal
+JSON-result проходят. Используется `mergedCall` из SDK, отдельного глобального
+state для Agent нет. RED: 2 теста падали на пропущенном JSON; GREEN:
+`dialect.test.ts` 31/31. Live на отдельном бинаре **kimi 2.4.1** подтверждает
+отсутствие argument JSON в исходящих bb deltas. Полный набор **78/78**
+(19 файлов, включая unit и все live) зелёный отдельно на **2.4.1** и **2.5.0**.
+Собранный `dist/host.js` отдельно прошёл delegation live на 2.5.0. Старые
+сохранённые события в таймлайне не переписываются; исправление действует на
+новые вызовы. `bb plugin build` предлагает `bb plugin types` для downgrade на
+SDK 0.6.104: не выполнять его, пока bundled SDK не включает #6769 (0.6.116+),
+иначе normalization-хук исчезнет.
+
 [^swarm-dump]: Live-дамп provider-commands/session-options против kimi acp 2.3.0 (in-process bridge, thread/start без промпта), 2026-10-22; сверка с llms-full.txt moonshotai.github.io/kimi-code
 
 [^audit-23]: Свежие пробы handshake/session/new против kimi 2.3.0 и сверка с релиз-нотами, 2026-10-22

@@ -65,6 +65,18 @@ bb plugin reload <id>   # после правок установленного �
 
 `bb plugin dev` требует запущенный bb.[^quickstart]
 
+Проверка delegation на конкретном бинаре и на собранном host-артефакте:
+
+```
+BB_KIMI_COMMAND=/absolute/path/to/kimi BB_KIMI_LIVE=1 \
+  npx vitest run kimi-live.delegation.test.ts
+BB_KIMI_HOST_ENTRY=./dist/host.js BB_KIMI_LIVE=1 \
+  npx vitest run kimi-live.delegation.test.ts
+```
+
+Первый тест дополнительно отклоняет argument JSON в `item.progress`; второй
+проверяет именно результат `bb plugin build`, а не исходный `host.ts`.
+
 ## 4. Record/replay паритет (для bridge с реальным провайдером)
 
 - Запись: запустить host-демон с `BB_PROVIDER_BRIDGE_RECORD_DIR=<dir>` и прогнать тред на провайдере; bridge с дочерним CLI дополнительно вызывает `experimental_recordProviderChildIo` сразу после `spawn()`.[^providers-ref]
