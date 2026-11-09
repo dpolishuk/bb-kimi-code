@@ -11,8 +11,11 @@
   существующий host bridge, поэтому enrolled hosts поддержаны без передачи
   credentials на server. RED: отсутствовал `src/usage-contract.js`; GREEN: 3
   focused tests, полный набор 70 passed/11 live skipped, typecheck и build.
-  Live `kimi-live.maintenance.test.ts` прошёл; визуальная панель не
-  проверялась. Контракт записан в
+  Live `kimi-live.maintenance.test.ts` прошёл. Codex review выявил zero-limit
+  booster cost, который скрывал все окна за schema validation; добавлена
+  нормализация только cost в `null` и regression test. PR branch установлен:
+  Kimi Code виден в Provider usage; daemon credential вернул expired, поэтому
+  live-окна в панели не проверялись. Контракт записан в
   [Provider usage panel](contracts/provider-usage-panel.md).
 
 ## 2026-11-06

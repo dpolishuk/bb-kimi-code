@@ -68,7 +68,10 @@ hosts работают без копирования секретов на bb se
 реальный fake-host RPC harness, включая discovery, маппинг, кэш, refresh,
 concurrency, stale resources и failure states. Live-тест
 `kimi-live.maintenance.test.ts` подтверждает реальный host-side
-`provider/usage`; визуальный прогон панели в этой проверке не выполнялся.
+`provider/usage`. После установки PR branch визуальная проверка подтвердила
+ресурс Kimi Code в **Settings → Provider usage**. В daemon bb использовался
+просроченный OAuth credential, поэтому панель показала корректный expired
+state; отображение live-окон в панели в этой проверке не выполнялось.
 
 [^zcode-federation]: bb-zcode, commit `bb83d180d5bfa03ec3dace038445ad260bea792d`.
 [^panel-contract]: get-bb/bb, commit `3572d271032c04dc7287b66e6638c8fea9acb8b7`.
