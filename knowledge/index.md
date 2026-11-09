@@ -23,6 +23,7 @@ okf_version: "0.2"
 
 * [Декларация провайдера](contracts/provider-declaration.md) — контракт `bb.providers.register`: capabilities, модели, env, extension kinds.
 * [Протокол provider bridge](contracts/provider-bridge-protocol.md) — инварианты JSON-RPC моста: грамматика дельт v3, жизненный цикл turn/item, recovery hints.
+* [Provider usage panel](contracts/provider-usage-panel.md) — отличие `provider/usage` от федеративного `provider-usage.v1`, поток через enrolled hosts и lifecycle кэша.
 
 # Ранбуки
 

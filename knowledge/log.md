@@ -1,5 +1,20 @@
 # Directory Update Log
 
+## 2026-11-09
+
+* **Feature**: Kimi Code добавлен в панель bb **Provider usage**. Исследование
+  bb-zcode `bb83d18` показало, что `maintenance.usage` и bridge
+  `provider/usage` недостаточны: панель обнаруживает server-side
+  `provider-usage.v1`. Добавлены discoverable list/get RPC, host-scoped Kimi
+  resources, маппинг 5h/weekly/custom окон, 60-секундный кэш, refresh bypass,
+  coalescing и failure states. Измерения идут через `system.usageLimits` в
+  существующий host bridge, поэтому enrolled hosts поддержаны без передачи
+  credentials на server. RED: отсутствовал `src/usage-contract.js`; GREEN: 3
+  focused tests, полный набор 70 passed/11 live skipped, typecheck и build.
+  Live `kimi-live.maintenance.test.ts` прошёл; визуальная панель не
+  проверялась. Контракт записан в
+  [Provider usage panel](contracts/provider-usage-panel.md).
+
 ## 2026-11-06
 
 * **Fix + compatibility (v0.2.17)**: у delegation Agent больше не отображается сырой JSON

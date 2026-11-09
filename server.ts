@@ -2,6 +2,7 @@ import type { BbPluginApi } from "@get-bb/plugin-sdk";
 
 import { generateKimiTitle } from "./src/kimi-title.js";
 import { readKimiAccountFromDisk } from "./src/kimi-account.js";
+import { registerUsageSource } from "./src/usage-source.js";
 
 export const KIMI_PLUGIN_ID = "kimi-code";
 export const KIMI_PROVIDER_ID = "kimi-code";
@@ -77,6 +78,8 @@ export default function plugin(bb: BbPluginApi) {
       },
     },
   });
+
+  registerUsageSource(bb);
 
   bb.experimental_aiServices.register({
     id: "kimi-code",
