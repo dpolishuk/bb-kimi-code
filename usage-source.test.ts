@@ -134,11 +134,37 @@ it("publishes Kimi usage resources and maps bridge quota windows for the panel",
       expect.objectContaining({ refresh: true }),
     );
 
+    collect.mockImplementation(async () => ({
+      "kimi-code": {
+        status: "ok" as const,
+        accountEmail: null,
+        planLabel: "Kimi Code",
+        windows: [
+          { label: "5h limit", usedPercent: 10, resetsAt: null },
+          {
+            label: "Booster wallet",
+            usedPercent: 0,
+            resetsAt: null,
+            cost: { usedUsdCents: 0, limitUsdCents: 0 },
+          },
+        ],
+      },
+    }));
+    expect(await read("online", "kimi-code", true)).toMatchObject({
+      usage: {
+        status: "ok",
+        windows: [
+          { label: "5h limit", kind: "five-hour" },
+          { label: "Booster wallet", cost: null },
+        ],
+      },
+    });
+
     expect(await read("offline")).toMatchObject({
       observedAt: null,
       usage: { status: "error", message: "Machine is disconnected." },
     });
-    expect(collect).toHaveBeenCalledTimes(2);
+    expect(collect).toHaveBeenCalledTimes(3);
     await expect(read("missing")).rejects.toThrow("Usage resource no longer exists.");
     await expect(read("online", "foreign")).rejects.toThrow("no longer exists");
     await expect(

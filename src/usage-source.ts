@@ -113,7 +113,10 @@ export function registerUsageSource(bb: BbPluginApi) {
                       kind: windowMetadata.kind ?? kimiWindowKind(window.label),
                       model: windowMetadata.model,
                       id: `${index}:${window.label}`,
-                      cost: window.cost ?? null,
+                      cost:
+                        window.cost && window.cost.limitUsdCents > 0
+                          ? window.cost
+                          : null,
                     };
                   }),
                 }

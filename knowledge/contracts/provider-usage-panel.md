@@ -50,7 +50,9 @@ hosts работают без копирования секретов на bb se
 
 - `5h limit` → `kind: "five-hour"`; `Weekly limit` → `"weekly"`; monthly и
   booster → `"custom"`. Каждое окно получает стабильный id
-  `${index}:${label}`, `model: null` и nullable `cost`.
+  `${index}:${label}`, `model: null` и nullable `cost`. При неположительном
+  `cost.limitUsdCents` только стоимость нормализуется в `null`; остальные
+  usage-окна сохраняются, поскольку panel contract требует положительный лимит.
 - `accountKey` и `plan` по умолчанию `null`: текущий Kimi usage endpoint не
   предоставляет эти данные. `accountEmail` и `planLabel` сохраняются, а
   отсутствующие поля старых bridge-ответов нормализуются в `null`.
