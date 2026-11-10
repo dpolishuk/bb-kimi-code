@@ -2,7 +2,7 @@
 
 ## 2026-11-09
 
-* **Feature**: Kimi Code добавлен в панель bb **Provider usage**. Исследование
+* **Feature (v0.2.18)**: Kimi Code добавлен в панель bb **Provider usage**. Исследование
   bb-zcode `bb83d18` показало, что `maintenance.usage` и bridge
   `provider/usage` недостаточны: панель обнаруживает server-side
   `provider-usage.v1`. Добавлены discoverable list/get RPC, host-scoped Kimi
