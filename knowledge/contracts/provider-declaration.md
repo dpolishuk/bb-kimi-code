@@ -53,6 +53,21 @@ icons/kimi.svg: многоцветный тайл схлопывался в пу
 | `deriveProviderOptions(ctx)` | синхронно на каждой команде сессии/turn; результат (JSON ≤ 64 КиБ) доезжает до bridge как `options.providerOptions`; core его не читает |
 | `extensionKinds` | свои виды айтемов/состояний `"<pluginId>/<name>"` со zod-схемами; сервер валидирует при ingest, сбой → `provider/unhandled` |
 
+# Maintenance и обновления CLI
+
+`withKimiInstallation` перехватывает `provider/installation/status` и
+`provider/installation/run`. Текущая версия читается из launch command через
+SDK helpers, а latest — из `https://code.kimi.com/kimi-code/latest` с
+5-минутным кэшем. При недоступном канале latest равен `null`, остальные
+maintenance-данные сохраняются. Update предлагается только при
+`compareVersions(current, latest) < 0`; run использует тот же
+`downloadedInstallerCommand`, что install, и `installationVerification`.
+
+Нельзя подменять этот канал npm `latest`: официальный `install.sh` скачивает
+бинарь по `/latest`, и версии каналов могут расходиться. Проверка: 5 unit
+тестов `installation.test.ts` и live `kimi-live.maintenance.test.ts` против
+реального CLI/endpoint.
+
 # Настройки и экспериментальные поля
 
 - Пользовательские ручки провайдера — в `bb.settings.define` плагина, доезжают через `deriveProviderOptions`.[^providers-ref]

@@ -1,5 +1,16 @@
 # Directory Update Log
 
+## 2026-11-14
+
+* **Feature (#3)**: maintenance теперь сообщает `latestVersion` и
+  `needsUpdate`, а Updates может запустить официальный installer. Async
+  `withKimiInstallation` перехватывает installation status/run, читает версию
+  из launch command и кэширует `/kimi-code/latest` на 5 минут. Канал installer
+  не смешивается с npm `latest`, потому что их версии могут расходиться.
+  RED: отсутствовал `src/kimi-installation.js`; GREEN: 5 focused tests,
+  полный набор 75 passed/11 live skipped, live maintenance, typecheck и build.
+  Контракт добавлен в [декларацию провайдера](contracts/provider-declaration.md).
+
 ## 2026-11-09
 
 * **Feature (v0.2.18)**: Kimi Code добавлен в панель bb **Provider usage**. Исследование
