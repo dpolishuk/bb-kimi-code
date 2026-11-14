@@ -69,6 +69,20 @@ itLive("reports health, installation, and usage through the kimi dialect", async
       "code.kimi.com/kimi-code/install",
     );
 
+    harness.sendRequest(5, "provider/installation/status", {
+      providerId: "kimi-code",
+      providerOptions: PROVIDER_OPTIONS,
+    });
+    const currentStatus = await harness.waitForResponse(5);
+    expect(currentStatus.error).toBeUndefined();
+    const current = currentStatus.result as {
+      latestVersion: string | null;
+      needsUpdate: boolean;
+      installAction: { kind: string } | null;
+    };
+    expect(current.latestVersion).toMatch(/^\d+\.\d+\.\d+/);
+    expect(current.needsUpdate).toBe(current.installAction?.kind === "update");
+
     harness.sendRequest(4, "provider/usage", {
       providerId: "kimi-code",
       providerOptions: PROVIDER_OPTIONS,

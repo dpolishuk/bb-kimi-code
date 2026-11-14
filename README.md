@@ -54,8 +54,8 @@ Everything Kimi Code exposes over ACP works in bb:
   user and project roots.
 - **Maintenance** — sign-in detection (`kimi login` hints), account usage
   windows (5h / weekly / monthly / booster) from Kimi's usage endpoint in
-  bb's **Provider usage** panel, and installing Kimi Code from bb on a host
-  where it is missing.
+  bb's **Provider usage** panel, and installing or updating Kimi Code from
+  bb on a host.
 - **Quota guard** — when a usage window is fully spent, new turns fail fast
   with a rate-limit error naming the window and its reset time instead of
   Kimi's silent empty turn (`BB_KIMI_QUOTA_GATE=0` disables the guard).

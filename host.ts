@@ -2,6 +2,7 @@ import { experimental_acpProviderBridge as acpProviderBridge, experimental_regis
 
 import { kimiAcpDialect } from "./src/dialect.js";
 import { narrowInitializeForkOnBridge } from "./src/handshake-fork.js";
+import { withKimiInstallation } from "./src/kimi-installation.js";
 import { mapPlanPromptMode } from "./src/prompt-mode.js";
 import { gateQuotaExhaustedTurns } from "./src/quota-gate.js";
 
@@ -24,6 +25,6 @@ registerAcpDialect(kimiAcpDialect);
 // is fully spent the gate fails the turn fast with a typed rateLimited
 // recovery hint instead. BB_KIMI_QUOTA_GATE=0 disables it (tests, recordings).
 export const experimental_providerBridge = gateQuotaExhaustedTurns(
-  mapPlanPromptMode(narrowInitializeForkOnBridge(acpProviderBridge)),
+  mapPlanPromptMode(narrowInitializeForkOnBridge(withKimiInstallation(acpProviderBridge))),
   { enabled: process.env.BB_KIMI_QUOTA_GATE !== "0" },
 );
