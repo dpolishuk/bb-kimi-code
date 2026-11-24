@@ -55,10 +55,16 @@ describe("Kimi agent title filtering", () => {
       name: "Fix <system_instructions> title leaks",
       source: "agent",
     };
+    const genuineLongTagTitle = {
+      kind: "thread.name",
+      name: "<system-reminder-guide> documentation",
+      source: "agent",
+    };
     const threadStarted = { kind: "thread.started" };
     const messages = runBridge(
       titleNotification([
         genuineTitle,
+        genuineLongTagTitle,
         {
           kind: "thread.name",
           name: "<system-reminder> Today's date is hidden",
@@ -70,7 +76,7 @@ describe("Kimi agent title filtering", () => {
 
     expect(messages).toHaveLength(1);
     expect(messages[0]).toMatchObject({
-      params: { deltas: [genuineTitle, threadStarted] },
+      params: { deltas: [genuineTitle, genuineLongTagTitle, threadStarted] },
     });
   });
 });

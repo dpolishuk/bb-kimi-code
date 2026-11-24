@@ -3,7 +3,7 @@ import type {
   ProviderBridgeDefinition,
 } from "@get-bb/plugin-sdk/provider-bridge";
 
-const HARNESS_TITLE = /^\s*<system(?:_instructions|[-_]reminder)\b/iu;
+const HARNESS_TITLE = /^\s*<system(?:_instructions|[-_]reminder)>/iu;
 
 type StdoutWrite = typeof process.stdout.write;
 type WriteCallback = (error?: Error | null) => void;

@@ -6,7 +6,7 @@ status: verified
 created: 2026-11-24
 verified:
   by: kimi-code
-  at: "2026-11-24T12:12:32Z"
+  at: "2026-11-24T18:32:04Z"
 stale_after: "2027-02-24"
 sources:
   - id: bb-events
@@ -49,7 +49,9 @@ agent-originated ACP titles. Поэтому его unit-тесты зелёны�
 `suppressHarnessAgentTitlesOnBridge`. На `start` она оборачивает stdout bridge и:
 
 - удаляет `thread.name` только при `source: "agent"` и title, начинающемся с
-  `<system_instructions>`, `<system_reminder>` или `<system-reminder>`;
+  полного тега `<system_instructions>`, `<system_reminder>` или
+  `<system-reminder>`; closing `>` обязателен, поэтому более длинные похожие
+  имена вроде `<system-reminder-guide>` сохраняются;
 - удаляет целиком JSON-RPC notification, если других дельт в нём нет;
 - сохраняет genuine Kimi titles (включая текст о тегах не в начале строки) и все
   unrelated deltas без изменений;

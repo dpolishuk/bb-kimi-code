@@ -96,6 +96,7 @@ itLive("does not publish Kimi's harness-derived fallback title", async () => {
       options: OPTIONS,
     });
 
+    let turnBoundarySeen = false;
     const deadline = Date.now() + 60_000;
     while (Date.now() < deadline) {
       await harness.flushWork();
@@ -108,15 +109,17 @@ itLive("does not publish Kimi's harness-derived fallback title", async () => {
           );
         })
       ) {
+        turnBoundarySeen = true;
         break;
       }
       await new Promise((resolve) => setTimeout(resolve, 100));
     }
 
+    expect(turnBoundarySeen).toBe(true);
     expect((await harness.waitForResponse(3)).error).toBeUndefined();
     expect(
       agentTitles(harness.messages).filter((title) =>
-        /^\s*<system(?:_instructions|[-_]reminder)\b/iu.test(title),
+        /^\s*<system(?:_instructions|[-_]reminder)>/iu.test(title),
       ),
     ).toEqual([]);
 

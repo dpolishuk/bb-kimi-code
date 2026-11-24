@@ -11,6 +11,9 @@
   и другие дельты. RED live-тест получал исходный плохой title; GREEN — unit
   72 passed / 12 skipped с изолированным account HOME, typecheck, build, live
   regression на source и `dist/host.js`, 15/15 применимых conformance rules.
+  CodeRabbit follow-up: полный closing `>` в tag matcher и обязательный assert
+  terminal turn boundary в live polling; regression на longer tag сначала падает,
+  затем проходит вместе с source live test.
   Подробности и границы — в [инциденте](incidents/2026-11-24-kimi-acp-harness-titles.md).
 
 ## 2026-11-09
