@@ -1,5 +1,21 @@
 # Directory Update Log
 
+## 2026-11-24
+
+* **Fix**: Kimi ACP больше не публикует в bb replaceable title, слепленный из
+  `<system_instructions>`. Причина подтверждена событиями трёх свежих тредов,
+  `state.json` Kimi 2.7.3 и upstream `titleFromPromptMetadataText`: title — prefix
+  полного prompt, а sanitizer v0.2.13 работал только в AI-service пути. Добавлена
+  outermost lifecycle-обёртка `suppressHarnessAgentTitlesOnBridge`: фильтрует
+  только agent-originated `thread.name` с harness prefix, сохраняя genuine titles
+  и другие дельты. RED live-тест получал исходный плохой title; GREEN — unit
+  72 passed / 12 skipped с изолированным account HOME, typecheck, build, live
+  regression на source и `dist/host.js`, 15/15 применимых conformance rules.
+  CodeRabbit follow-up: полный closing `>` в tag matcher и обязательный assert
+  terminal turn boundary в live polling; regression на longer tag сначала падает,
+  затем проходит вместе с source live test.
+  Подробности и границы — в [инциденте](incidents/2026-11-24-kimi-acp-harness-titles.md).
+
 ## 2026-11-09
 
 * **Feature (v0.2.18)**: Kimi Code добавлен в панель bb **Provider usage**. Исследование
