@@ -285,6 +285,14 @@ ACP-инструментов не содержат. Что изменилось 
   remote environments SSH/Docker (phase 1), merge skills across workspace
   directories — пока без ACP-поверхности.
 
+## Актуальная матрица поддержки (2026-11-24)
+
+Поддержка стабильных CLI 2.5.0–2.7.3 вынесена в отдельный документ:
+[Поддержка возможностей Kimi Code CLI](../contracts/kimi-code-feature-support.md).
+Там зафиксированы live-проверенные модели/режимы/сессии/команды, прозрачные
+Kimi-side изменения, ограничения fork/Tower/SSH/predictions и непроверенный
+Bedrock. Этот decision ниже сохраняет историю первоначальных аудитов.
+
 ## Erratum: generic progress Agent содержал JSON аргументов (2026-11-06)
 
 Аудит 2.4.1 выше проверял handshake, модели и команды, но не покрывал generic

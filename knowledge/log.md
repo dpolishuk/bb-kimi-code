@@ -15,6 +15,12 @@
   terminal turn boundary в live polling; regression на longer tag сначала падает,
   затем проходит вместе с source live test.
   Подробности и границы — в [инциденте](incidents/2026-11-24-kimi-acp-harness-titles.md).
+* **Docs**: свежий аудит стабильных Kimi Code CLI 2.5.0–2.7.3 записан в
+  [матрицу поддержки](contracts/kimi-code-feature-support.md): live-подтверждены
+  модели, thinking, Plan mode, resume и ACP-команды; отмечены прозрачные
+  Kimi-side изменения, отсутствие fork/predictions/Tower/SSH parity и отдельно
+  непроверенные Bedrock и live plan timeline. Ссылка добавлена в index и decision
+  об ACP; кода и релиз это не меняет.
 
 ## 2026-11-09
 
