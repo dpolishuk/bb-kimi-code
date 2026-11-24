@@ -2,7 +2,7 @@
 
 ## 2026-11-24
 
-* **Fix**: Kimi ACP больше не публикует в bb replaceable title, слепленный из
+* **Fix (v0.2.19)**: Kimi ACP больше не публикует в bb replaceable title, слепленный из
   `<system_instructions>`. Причина подтверждена событиями трёх свежих тредов,
   `state.json` Kimi 2.7.3 и upstream `titleFromPromptMetadataText`: title — prefix
   полного prompt, а sanitizer v0.2.13 работал только в AI-service пути. Добавлена

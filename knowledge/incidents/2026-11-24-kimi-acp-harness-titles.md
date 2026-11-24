@@ -43,7 +43,7 @@ Generic ACP bridge добавляет инструкции bb первым text 
 agent-originated ACP titles. Поэтому его unit-тесты зелёные, а исходный симптом
 сохраняется.
 
-## Fix
+## Fix (v0.2.19)
 
 `src/agent-title-filter.ts` добавляет outermost lifecycle-обёртку
 `suppressHarnessAgentTitlesOnBridge`. На `start` она оборачивает stdout bridge и:
