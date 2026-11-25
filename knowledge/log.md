@@ -2,6 +2,17 @@
 
 ## 2026-11-24
 
+* **Fork**: running/tip fork восстанавливается через существующий get-bb/bb#7231
+  handoff (SDK 0.6.137+): fork/close на source ACP connection и resume target в
+  новом процессе, лок включён. Плагин обновлён до SDK 0.6.138; после RED на
+  старом SDK обе fork conformance rules прошли на Kimi 2.7.3, затем declaration
+  изменена на `tip`. Historical checkpoint не заявлен: Kimi ACP не принимает
+  turnIndex. Первый implementation task адаптирован без повторной реализации
+  upstream handoff; historical остаётся следующим upstream этапом эпика. Попытка
+  использовать 0.6.157 дала `reasoningDiscovery: unknown` для пяти моделей на
+  isolated live model/list; минимальный опубликованный 0.6.138 устранил это без
+  потери fork handoff.
+
 * **Fix (v0.2.19)**: Kimi ACP больше не публикует в bb replaceable title, слепленный из
   `<system_instructions>`. Причина подтверждена событиями трёх свежих тредов,
   `state.json` Kimi 2.7.3 и upstream `titleFromPromptMetadataText`: title — prefix
