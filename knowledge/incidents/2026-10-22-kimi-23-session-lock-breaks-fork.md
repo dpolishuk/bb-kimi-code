@@ -104,7 +104,7 @@ get-bb/bb#7231 (SDK 0.6.137+) решает live-source fork без отключ�
 процессе. Это соответствует same-process snapshot/quiescence модели Kimi и не
 требует shared-connection lifetime после handoff.
 
-Ветка плагина обновляет SDK до 0.6.138, удаляет `narrowInitializeForkOnBridge`
+Релиз v0.2.20 обновляет SDK до 0.6.138, удаляет `narrowInitializeForkOnBridge`
 и включает `fork: "tip"` после live GREEN на Kimi 2.7.3: canonical conformance
 проходит `session/fork-identity` и `session/fork-identity-announced`. Historical
 checkpoint не включается: ACP `session/fork` по-прежнему не принимает turn id;

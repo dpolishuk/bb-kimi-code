@@ -2,7 +2,7 @@
 
 ## 2026-11-24
 
-* **Fork**: running/tip fork восстанавливается через существующий get-bb/bb#7231
+* **Fork (v0.2.20)**: running/tip fork восстанавливается через существующий get-bb/bb#7231
   handoff (SDK 0.6.137+): fork/close на source ACP connection и resume target в
   новом процессе, лок включён. Плагин обновлён до SDK 0.6.138; после RED на
   старом SDK обе fork conformance rules прошли на Kimi 2.7.3, затем declaration
