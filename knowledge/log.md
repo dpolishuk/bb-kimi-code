@@ -1,5 +1,12 @@
 # Directory Update Log
 
+## 2026-11-25
+
+* **Update (v0.2.20)**: running/tip fork теперь поддерживается через SDK
+  live-source handoff (`get-bb/bb#7231`), с сохранением session lock. Матрица
+  поддержки обновлена после live GREEN обеих fork rules на source и dist;
+  historical checkpoint по-прежнему требует отдельного ACP turnIndex контракта.
+
 ## 2026-11-24
 
 * **Fork (v0.2.20)**: running/tip fork восстанавливается через существующий get-bb/bb#7231
@@ -26,6 +33,12 @@
   terminal turn boundary в live polling; regression на longer tag сначала падает,
   затем проходит вместе с source live test.
   Подробности и границы — в [инциденте](incidents/2026-11-24-kimi-acp-harness-titles.md).
+* **Docs**: свежий аудит стабильных Kimi Code CLI 2.5.0–2.7.3 записан в
+  [матрицу поддержки](contracts/kimi-code-feature-support.md): live-подтверждены
+  модели, thinking, Plan mode, resume и ACP-команды; отмечены прозрачные
+  Kimi-side изменения, ограничения historical fork/predictions/Tower/SSH и отдельно
+  непроверенные Bedrock и live plan timeline. Ссылка добавлена в index и decision
+  об ACP; кода и релиз это не меняет.
 
 ## 2026-11-09
 

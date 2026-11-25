@@ -21,6 +21,7 @@ okf_version: "0.2"
 
 # Контракты
 
+* [Поддержка возможностей Kimi Code CLI](contracts/kimi-code-feature-support.md) — актуальная матрица для CLI 2.5.0–2.7.3 и plugin 0.2.19: live-подтверждённые функции, прозрачные Kimi-side изменения, ограничения и непроверенные области.
 * [Декларация провайдера](contracts/provider-declaration.md) — контракт `bb.providers.register`: capabilities, модели, env, extension kinds.
 * [Протокол provider bridge](contracts/provider-bridge-protocol.md) — инварианты JSON-RPC моста: грамматика дельт v3, жизненный цикл turn/item, recovery hints.
 * [Provider usage panel](contracts/provider-usage-panel.md) — отличие `provider/usage` от федеративного `provider-usage.v1`, поток через enrolled hosts и lifecycle кэша.
