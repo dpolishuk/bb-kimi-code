@@ -23,11 +23,11 @@ describe("the kimi-code provider declaration", () => {
     expect(declaration.displayName).toBe("Kimi Code");
   });
 
-  it("declares the capabilities kimi acp advertises, minus live-broken fork", () => {
+  it("declares the capabilities kimi acp advertises, including live-source fork handoff", () => {
     expect(registeredDeclaration().capabilities).toEqual({
       supportsServiceTier: false,
       supportsNativeUserQuestion: false,
-      fork: "none",
+      fork: "tip",
       supportsManualCompaction: true,
       supportsThreadArchive: false,
       supportsThreadRename: false,
@@ -36,14 +36,8 @@ describe("the kimi-code provider declaration", () => {
     });
   });
 
-  it("narrows fork to none because kimi locks live sessions to their process", () => {
-    // kimi >= 2.3.0 holds an exclusive per-session lock for as long as the
-    // owning kimi process lives, and bb forks by asking a NEW kimi process
-    // to fork the still-live source session — kimi rejects that with "This
-    // session is in use by another Kimi Code process". Tip-forks only work
-    // after the owner process exits, which bb's fork flow never guarantees,
-    // so the declaration must not offer fork.
-    expect(registeredDeclaration().capabilities.fork).toBe("none");
+  it("does not claim historical checkpoint fork", () => {
+    expect(registeredDeclaration().capabilities.fork).not.toBe("checkpoint");
   });
 
   it("declares only the permission modes the ACP bridge can enforce", () => {

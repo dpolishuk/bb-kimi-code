@@ -96,6 +96,21 @@ fork живого треда всегда падает. Это не только
 Stale-локи (файлы от мёртвых pid в `~/.kimi-code/locks/sessions/`) безвредны —
 живость pid проверяется.
 
+# Аддендум (2026-11-24): running/tip fork восстановлен через SDK handoff
+
+get-bb/bb#7231 (SDK 0.6.137+) решает live-source fork без отключения лока:
+`session/fork` выполняется на source ACP connection, затем fresh target
+закрывается там и восстанавливается через `session/resume` в собственном
+процессе. Это соответствует same-process snapshot/quiescence модели Kimi и не
+требует shared-connection lifetime после handoff.
+
+Ветка плагина обновляет SDK до 0.6.138, удаляет `narrowInitializeForkOnBridge`
+и включает `fork: "tip"` после live GREEN на Kimi 2.7.3: canonical conformance
+проходит `session/fork-identity` и `session/fork-identity-announced`. Historical
+checkpoint не включается: ACP `session/fork` по-прежнему не принимает turn id;
+Kimi хранит historical selection как live persistent `turnIndex`, а не порядковый
+номер сообщения. Для него нужен отдельный upstream Kimi + SDK контракт.
+
 # Аддендум (2026-11-02): у лока появился выключатель
 
 kimi 2.3.1 (release notes) добавил `KIMI_CODE_SESSION_LOCK=0` и опцию

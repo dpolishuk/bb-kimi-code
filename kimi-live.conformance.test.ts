@@ -27,7 +27,11 @@ afterEach(() => {
 const itLive = LIVE ? it : it.skip;
 
 itLive("passes the canonical protocol suite against a real kimi acp", async () => {
-  const { experimental_providerBridge: bridge } = await import("./host.js");
+  const { experimental_providerBridge: bridge } =
+    process.env.BB_KIMI_HOST_ENTRY === "./dist/host.js"
+      // @ts-expect-error The built bundle does not ship type declarations.
+      ? await import("./dist/host.js")
+      : await import("./host.js");
   const output = captureBridgeJsonRpcOutput();
   try {
     const report = await runBridgeConformance({
@@ -58,19 +62,14 @@ itLive("passes the canonical protocol suite against a real kimi acp", async () =
 
     console.info(`kimi bridge live conformance:\n${formatConformanceReport(report)}`);
 
-    // kimi >= 2.3.0 locks every session to its owning process, and bb forks
-    // by asking a NEW kimi process to fork the still-live source session, so
-    // fork always fails against a live session. The declaration says
-    // fork: "none" and the plugin's host.ts wrapper narrows the initialize
-    // handshake the same way, so the conformance kit excludes the fork rule
-    // entirely instead of running it into the lock. If this pin breaks with
-    // the rule failing again, the handshake narrowing regressed; if it breaks
-    // with the rule passing, kimi dropped the lock — restore fork: "tip" in
-    // server.ts, drop the handshake wrapper, and go back to asserting
-    // report.passed.
-    expect(
-      report.results.some((result) => result.id === "session/fork-identity"),
-    ).toBe(false);
+    // A live source forks on its own ACP connection, closes the fresh target
+    // there, and resumes it in the target process. The lock stays enabled.
+    expect(report.results).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ id: "session/fork-identity", status: "pass" }),
+        expect.objectContaining({ id: "session/fork-identity-announced", status: "pass" }),
+      ]),
+    );
     expect(report.results.map((result) => result.status)).toEqual(
       report.results.map(() => "pass"),
     );

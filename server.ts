@@ -7,16 +7,10 @@ import { registerUsageSource } from "./src/usage-source.js";
 export const KIMI_PLUGIN_ID = "kimi-code";
 export const KIMI_PROVIDER_ID = "kimi-code";
 
-// Capabilities below mirror what `kimi acp` (Kimi Code CLI 2.2.0) reports in
-// its ACP initialize handshake: loadSession, promptCapabilities.image,
-// sessionCapabilities { list, resume, close, delete, fork }, and the
-// session/new configOptions for model, thinking level, and mode. Re-probe the
-// handshake before widening them. One deliberate narrowing: kimi >= 2.3.0
-// locks each session to its owning process for the process lifetime, and bb
-// forks by asking a NEW kimi process to fork the still-live source session,
-// which kimi rejects ("This session is in use by another Kimi Code process").
-// Tip-forks only succeed after the owner exits, so fork stays "none" until
-// kimi allows cross-process forks of live sessions.
+// Capabilities mirror the current `kimi acp` handshake. Live-source forks use
+// the SDK handoff: fork and close on the source ACP connection, then resume the
+// target in its own process. Historical checkpoint selection is not exposed by
+// Kimi ACP, so only tip fork is declared.
 export default function plugin(bb: BbPluginApi) {
   bb.providers.register({
     id: KIMI_PROVIDER_ID,
@@ -35,7 +29,7 @@ export default function plugin(bb: BbPluginApi) {
     capabilities: {
       supportsServiceTier: false,
       supportsNativeUserQuestion: false,
-      fork: "none",
+      fork: "tip",
       supportsManualCompaction: true,
       supportsThreadArchive: false,
       supportsThreadRename: false,

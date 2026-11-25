@@ -9,11 +9,7 @@ it("exports the published ACP bridge as the plugin's provider bridge", async () 
   expect(typeof bridge.handleLine).toBe("function");
 });
 
-it("narrowes the initialize handshake to the declared fork capability (none)", async () => {
-  // The SDK's ACP bridge hardcodes `fork: "tip"` in its initialize response
-  // regardless of the agent; kimi >= 2.3.0 cannot fork live sessions, the
-  // declaration says "none", and handshake facts may only narrow the
-  // declaration — so the plugin rewrites fork in the initialize response.
+it("exports the published ACP bridge with live-source fork handoff", async () => {
   const hostEntry = await import("./host.js");
   const harness = createBridgeJsonRpcTestHarness(hostEntry.experimental_providerBridge.handleLine);
   try {
@@ -24,7 +20,7 @@ it("narrowes the initialize handshake to the declared fork capability (none)", a
     const response = await harness.waitForResponse(1);
     expect(response.error).toBeUndefined();
     const capabilities = (response.result as { capabilities: Record<string, unknown> }).capabilities;
-    expect(capabilities.fork).toBe("none");
+    expect(capabilities.fork).toBe("tip");
     // Everything else in the SDK response passes through untouched.
     expect(capabilities.approvalEnforcedBy).toBe("runtime");
     expect(capabilities.grammarVersions).toEqual([3, 3]);
