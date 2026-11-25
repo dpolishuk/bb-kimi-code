@@ -7,7 +7,7 @@ status: verified
 created: 2026-11-24
 verified:
   by: kimi-code
-  at: "2026-11-24T20:28:31Z"
+  at: "2026-11-25T09:34:44Z"
 stale_after: "2026-12-24"
 sources:
   - id: changelog
@@ -17,11 +17,11 @@ sources:
     resource: https://www.kimi.com/code/docs/en/kimi-code-cli/reference/kimi-acp.html
     title: Официальная capability matrix и покрытие методов `kimi acp`
   - id: plugin-release
-    resource: https://github.com/dpolishuk/bb-kimi-code/tree/5140a66edf35ad4ab9107751b5db27ff6b8af8d0
-    title: bb-plugin-kimi-code 0.2.19, релизный коммит
+    resource: https://github.com/dpolishuk/bb-kimi-code/tree/e7fbeaea44e7e5e2145a3f2b7a23895733482a8c
+    title: bb-plugin-kimi-code 0.2.20, релизный коммит
   - id: live-audit
-    resource: BB_KIMI_LIVE=1 прогоны kimi-live.models/session-state/plan-mode/conformance и raw initialize против Kimi 2.7.3, 2026-11-24
-    title: Живая проверка моделей, режимов, команд, resume и agentCapabilities
+    resource: BB_KIMI_LIVE=1 прогоны models/session-state/plan-mode/conformance и raw initialize против Kimi 2.7.3, 2026-11-24; fork source/dist против Kimi 2.7.3, 2026-11-25
+    title: Живая проверка моделей, режимов, команд, resume и agentCapabilities; обе fork rules на SDK 0.6.138
 ---
 
 # Поддержка возможностей Kimi Code CLI в bb-плагине
@@ -29,7 +29,7 @@ sources:
 ## Область
 
 Снимок относится к **Kimi Code CLI 2.5.0–2.7.3** и **bb-plugin-kimi-code
-0.2.19**. Canary 2.8.0 и Desktop-релизы не входят. Плагин использует `kimi acp`,
+0.2.20**. Canary 2.8.0 и Desktop-релизы не входят. Плагин использует `kimi acp`,
 поэтому возможности TUI, Web, Desktop и standalone server не становятся
 bb-native UI автоматически.[^acp-reference]
 
@@ -114,12 +114,14 @@ bb-native UI автоматически.[^acp-reference]
 - **2.7.1–2.7.3** — исправления fork, queued prompts, model availability и
   Web/TUI поведения; они не расширяют ACP capability matrix.[^live-audit]
 
-## Постоянные ограничения плагина
+## Ограничения плагина
 
-- **Fork** — `fork: "none"` в декларации, несмотря на upstream running и
-  historical-turn fork. BB bridge рассчитан на tip fork, а исторический checkpoint
-  не поддерживается. После изменений 2.5–2.7 стоит заново проверить живой fork и
-  риск torn copy перед расширением декларации.[^plugin-release]
+- **Running/tip fork** — **поддержано с 0.2.20** через SDK live-source handoff
+  (`get-bb/bb#7231`): `session/fork` и close выполняются на source ACP
+  connection, затем target восстанавливается в собственном процессе. Session lock
+  остаётся включён; обе fork rules прошли на source и `dist/host.js`. Historical
+  checkpoint по-прежнему **не поддерживается**: ACP `session/fork` не принимает
+  `turnIndex`, поэтому выбрать ранний completed turn нельзя.[^plugin-release]
 - **Rename/archive mirror** — bb titles/archive не зеркалируются в Kimi session;
   `supportsThreadRename` и `supportsThreadArchive` равны `false`.[^plugin-release]
 - **Logout** — Kimi объявляет `auth.logout`, но плагин и bb maintenance surface
@@ -138,5 +140,5 @@ canonical ACP conformance при этом прошли.[^live-audit]
 
 [^changelog]: [Официальный changelog Kimi Code CLI](https://www.kimi.com/code/docs/en/kimi-code-cli/changelog.html), разделы 2.5.0–2.7.3.
 [^acp-reference]: [Официальный `kimi acp` reference](https://www.kimi.com/code/docs/en/kimi-code-cli/reference/kimi-acp.html), capability matrix и ACP method coverage.
-[^plugin-release]: [bb-plugin-kimi-code 0.2.19](https://github.com/dpolishuk/bb-kimi-code/tree/5140a66edf35ad4ab9107751b5db27ff6b8af8d0), `server.ts` и `host.ts`.
-[^live-audit]: Локальные прогоны 2026-11-24: raw `initialize` против `kimi acp` 2.7.3; `BB_KIMI_LIVE=1 npx vitest run kimi-live.models.test.ts kimi-live.session-state.test.ts`, отдельно `kimi-live.plan-mode.test.ts` и `kimi-live.conformance.test.ts`; maintenance health отдельно завершился `unauthenticated`.
+[^plugin-release]: [bb-plugin-kimi-code 0.2.20](https://github.com/dpolishuk/bb-kimi-code/tree/e7fbeaea44e7e5e2145a3f2b7a23895733482a8c), `server.ts` и `host.ts`.
+[^live-audit]: Локальные прогоны 2026-11-24: raw `initialize` против `kimi acp` 2.7.3; `BB_KIMI_LIVE=1 npx vitest run kimi-live.models.test.ts kimi-live.session-state.test.ts`, отдельно `kimi-live.plan-mode.test.ts` и `kimi-live.conformance.test.ts`; maintenance health отдельно завершился `unauthenticated`. 2026-11-25: на SDK 0.6.138 обе fork rules прошли на source и `dist/host.js` на Kimi 2.7.3.
