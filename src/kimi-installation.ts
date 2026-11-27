@@ -1,9 +1,18 @@
+import { realpath } from "node:fs/promises";
+import { homedir } from "node:os";
+import { join, resolve } from "node:path";
+
 import {
+  BRIDGE_JSON_RPC_ERRORS,
+  bridgeRequestEnvelopeSchema,
   experimental_compareVersions as compareVersions,
   experimental_installationVerification as installationVerification,
   experimental_readCliVersion as readCliVersion,
   experimental_resolveExecutablePath as resolveExecutablePath,
   experimental_versionFrom as versionFrom,
+  hostDaemonAcpLaunchSpecSchema,
+  providerInstallationRunParamsSchema,
+  providerInstallationStatusParamsSchema,
   type ProviderInstallationCommand,
   type ProviderInstallationRunResult,
   type ProviderInstallationStatus,
@@ -27,12 +36,11 @@ export interface KimiInstallationOptions {
   cacheMs?: number;
 }
 
-interface InstallationRequest {
-  id: string | number;
-  method: "provider/installation/status" | "provider/installation/run";
-  command: string;
-  action?: "install" | "update";
-}
+type ParsedInstallationRequest =
+  | { kind: "passthrough" }
+  | { kind: "invalid"; id: string | number; method: string; issues: string }
+  | { kind: "status"; id: string | number; command: string }
+  | { kind: "run"; id: string | number; command: string; action: "install" | "update" };
 
 function defaultInstaller(): ProviderInstallationCommand {
   const maintenance = kimiAcpDialect.maintenance;
@@ -42,44 +50,112 @@ function defaultInstaller(): ProviderInstallationCommand {
   return maintenance.installer();
 }
 
-function installationRequest(line: string): InstallationRequest | undefined {
+export function officialKimiExecutablePath(home = homedir()): string {
+  const name = process.platform === "win32" ? "kimi.exe" : "kimi";
+  return join(home, ".kimi-code", "bin", name);
+}
+
+async function resolveExistingPath(path: string): Promise<string> {
+  try {
+    return await realpath(path);
+  } catch {
+    return resolve(path);
+  }
+}
+
+async function isInstallerManagedExecutable(executablePath: string): Promise<boolean> {
+  const [resolved, official] = await Promise.all([
+    resolveExistingPath(executablePath),
+    resolveExistingPath(officialKimiExecutablePath()),
+  ]);
+  return resolved === official;
+}
+
+function launchSpecCommand(providerOptions: Record<string, unknown> | undefined): string | undefined {
+  const parsed = hostDaemonAcpLaunchSpecSchema.safeParse(providerOptions?.["acpLaunchSpec"]);
+  if (!parsed.success) return undefined;
+  return parsed.data.command;
+}
+
+function formatZodIssues(issues: { path: PropertyKey[]; message: string }[]): string {
+  return issues.map((issue) => `${issue.path.join(".")}: ${issue.message}`).join("; ");
+}
+
+function invalidLaunchSpecRequest(
+  id: string | number,
+  method: string,
+  providerOptions: Record<string, unknown> | undefined,
+): Extract<ParsedInstallationRequest, { kind: "invalid" }> | undefined {
+  const launchSpecValue = providerOptions?.["acpLaunchSpec"];
+  if (launchSpecValue === undefined) return undefined;
+  const launchSpec = hostDaemonAcpLaunchSpecSchema.safeParse(launchSpecValue);
+  if (launchSpec.success) return undefined;
+  return {
+    kind: "invalid",
+    id,
+    method,
+    issues: formatZodIssues(
+      launchSpec.error.issues.map((issue) => ({
+        path: ["providerOptions", "acpLaunchSpec", ...issue.path],
+        message: issue.message,
+      })),
+    ),
+  };
+}
+
+function parseInstallationRequest(line: string): ParsedInstallationRequest {
   let value: unknown;
   try {
     value = JSON.parse(line);
   } catch {
-    return undefined;
+    return { kind: "passthrough" };
   }
-  if (typeof value !== "object" || value === null) return undefined;
-  const request = value as {
-    jsonrpc?: unknown;
-    id?: unknown;
-    method?: unknown;
-    params?: {
-      action?: unknown;
-      providerOptions?: { acpLaunchSpec?: { command?: unknown } };
+  const envelope = bridgeRequestEnvelopeSchema.safeParse(value);
+  if (!envelope.success) return { kind: "passthrough" };
+  const method = envelope.data.method;
+  if (method !== "provider/installation/status" && method !== "provider/installation/run") {
+    return { kind: "passthrough" };
+  }
+
+  if (method === "provider/installation/status") {
+    const params = providerInstallationStatusParamsSchema.safeParse(envelope.data.params ?? {});
+    if (!params.success) {
+      return {
+        kind: "invalid",
+        id: envelope.data.id,
+        method,
+        issues: formatZodIssues(params.error.issues),
+      };
+    }
+    const invalidLaunchSpec = invalidLaunchSpecRequest(envelope.data.id, method, params.data.providerOptions);
+    if (invalidLaunchSpec !== undefined) return invalidLaunchSpec;
+    const command = launchSpecCommand(params.data.providerOptions);
+    if (command === undefined || command.length === 0) {
+      return { kind: "passthrough" };
+    }
+    return { kind: "status", id: envelope.data.id, command };
+  }
+
+  const params = providerInstallationRunParamsSchema.safeParse(envelope.data.params ?? {});
+  if (!params.success) {
+    return {
+      kind: "invalid",
+      id: envelope.data.id,
+      method,
+      issues: formatZodIssues(params.error.issues),
     };
-  };
-  if (
-    request.jsonrpc !== "2.0" ||
-    (typeof request.id !== "string" && typeof request.id !== "number") ||
-    (request.method !== "provider/installation/status" &&
-      request.method !== "provider/installation/run")
-  ) {
-    return undefined;
   }
-  const command = request.params?.providerOptions?.acpLaunchSpec?.command;
-  if (typeof command !== "string" || command.length === 0) return undefined;
-  if (request.method === "provider/installation/status") {
-    return { id: request.id, method: request.method, command };
-  }
-  if (request.params?.action !== "install" && request.params?.action !== "update") {
-    return undefined;
+  const invalidLaunchSpec = invalidLaunchSpecRequest(envelope.data.id, method, params.data.providerOptions);
+  if (invalidLaunchSpec !== undefined) return invalidLaunchSpec;
+  const command = launchSpecCommand(params.data.providerOptions);
+  if (command === undefined || command.length === 0) {
+    return { kind: "passthrough" };
   }
   return {
-    id: request.id,
-    method: request.method,
+    kind: "run",
+    id: envelope.data.id,
     command,
-    action: request.params.action,
+    action: params.data.action,
   };
 }
 
@@ -122,8 +198,11 @@ export function withKimiInstallation<B extends BridgeLike>(
     ]);
     const installed = executablePath !== null;
     const currentVersion = installed ? await readVersion(command) : null;
+    const managed = installed && executablePath !== null
+      ? await isInstallerManagedExecutable(executablePath)
+      : false;
     const needsUpdate =
-      installed &&
+      managed &&
       currentVersion !== null &&
       latest !== null &&
       compareVersions(currentVersion, latest) < 0;
@@ -169,14 +248,25 @@ export function withKimiInstallation<B extends BridgeLike>(
   return {
     ...bridge,
     handleLine(line: string) {
-      const request = installationRequest(line);
-      if (request === undefined) {
+      const request = parseInstallationRequest(line);
+      if (request.kind === "passthrough") {
         bridge.handleLine(line);
         return;
       }
-      const work = request.method === "provider/installation/status"
+      if (request.kind === "invalid") {
+        writeJson({
+          jsonrpc: "2.0",
+          id: request.id,
+          error: {
+            code: BRIDGE_JSON_RPC_ERRORS.INVALID_PARAMS,
+            message: `Invalid params for "${request.method}": ${request.issues}`,
+          },
+        });
+        return;
+      }
+      const work = request.kind === "status"
         ? status(request.command)
-        : run(request.command, request.action!);
+        : run(request.command, request.action);
       void work.then(
         (result) => writeJson({ jsonrpc: "2.0", id: request.id, result }),
         (error: unknown) => writeJson({

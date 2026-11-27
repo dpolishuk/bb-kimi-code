@@ -56,16 +56,30 @@ icons/kimi.svg: многоцветный тайл схлопывался в пу
 # Maintenance и обновления CLI
 
 `withKimiInstallation` перехватывает `provider/installation/status` и
-`provider/installation/run`. Текущая версия читается из launch command через
-SDK helpers, а latest — из `https://code.kimi.com/kimi-code/latest` с
-5-минутным кэшем. При недоступном канале latest равен `null`, остальные
-maintenance-данные сохраняются. Update предлагается только при
-`compareVersions(current, latest) < 0`; run использует тот же
-`downloadedInstallerCommand`, что install, и `installationVerification`.
+`provider/installation/run`. Перед работой запрос целиком проверяется
+контрактами SDK (`providerInstallationStatusParamsSchema` /
+`providerInstallationRunParamsSchema` и, если поле есть,
+`hostDaemonAcpLaunchSpecSchema`). Невалидный запрос отвечает
+`INVALID_PARAMS (-32602)` и не уходит в underlying bridge — иначе
+достаточно валидного `command`, чтобы обойти проверку SDK (например,
+status без `providerId` и с `acpLaunchSpec.args: 42` возвращал успешный
+статус).
+
+Текущая версия читается из launch command через SDK helpers, а latest —
+из `https://code.kimi.com/kimi-code/latest` с 5-минутным кэшем. При
+недоступном канале latest равен `null`, остальные maintenance-данные
+сохраняются. Update предлагается только если резолвнутый executable —
+это официальный бинарь installer'а (`~/.kimi-code/bin/kimi`, с учётом
+realpath) и `compareVersions(current, latest) < 0`. Чужой бинарь
+(Homebrew и т.п., см. инцидент про shadowed kimi) может быть старше
+канала, но официальный `install.sh` его не заменяет и остаётся раньше в
+PATH демона, поэтому `needsUpdate` и `installAction` в этом случае
+пустые. run использует тот же `downloadedInstallerCommand`, что install,
+и `installationVerification`.
 
 Нельзя подменять этот канал npm `latest`: официальный `install.sh` скачивает
-бинарь по `/latest`, и версии каналов могут расходиться. Проверка: 5 unit
-тестов `installation.test.ts` и live `kimi-live.maintenance.test.ts` против
+бинарь по `/latest`, и версии каналов могут расходиться. Проверка: unit
+тесты `installation.test.ts` и live `kimi-live.maintenance.test.ts` против
 реального CLI/endpoint.
 
 # Настройки и экспериментальные поля

@@ -1,5 +1,17 @@
 # Directory Update Log
 
+## 2026-11-27
+
+* **Fix (#10)**: `withKimiInstallation` больше не перехватывает installation
+  status/run по одному валидному `command`. Полный запрос проверяется Zod-
+  контрактами SDK; мусорные params отвечают `INVALID_PARAMS (-32602)`.
+  Официальный installer предлагается как update только для бинаря из
+  `~/.kimi-code/bin` (realpath), а не для shadowed Homebrew `kimi`.
+  RED/GREEN: тесты в `installation.test.ts` (invalid params; Homebrew не
+  получает update action). Контракт обновлён в
+  [декларации провайдера](contracts/provider-declaration.md).
+
+
 ## 2026-11-14
 
 * **Feature (#3)**: maintenance теперь сообщает `latestVersion` и

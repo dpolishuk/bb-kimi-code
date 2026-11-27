@@ -1,7 +1,10 @@
+import { homedir } from "node:os";
+import { join } from "node:path";
+
 import { experimental_createBridgeJsonRpcTestHarness as createBridgeJsonRpcTestHarness } from "@get-bb/plugin-sdk/provider-bridge/testing";
 import { describe, expect, it, vi } from "vitest";
 
-import { withKimiInstallation } from "./src/kimi-installation.js";
+import { officialKimiExecutablePath, withKimiInstallation } from "./src/kimi-installation.js";
 
 const PROVIDER_OPTIONS = {
   acpDialect: "kimi",
@@ -12,6 +15,9 @@ const PROVIDER_OPTIONS = {
     env: {},
   },
 };
+
+const OFFICIAL_KIMI = officialKimiExecutablePath();
+const HOMEBREW_KIMI = "/opt/homebrew/bin/kimi";
 
 function fixture(options: {
   executablePath?: string | null;
@@ -27,7 +33,7 @@ function fixture(options: {
     displayCommand: "install-kimi",
   });
   const bridge = withKimiInstallation(underlying, {
-    resolveExecutablePath: async () => options.executablePath === undefined ? "/bin/kimi" : options.executablePath,
+    resolveExecutablePath: async () => options.executablePath === undefined ? OFFICIAL_KIMI : options.executablePath,
     readCliVersion,
     fetchImpl,
     installer,
@@ -45,7 +51,7 @@ function sendStatus(harness: ReturnType<typeof createBridgeJsonRpcTestHarness>, 
 }
 
 describe("Kimi installation maintenance", () => {
-  it("offers an update when the installed CLI is older than the installer channel", async () => {
+  it("offers an update when the official installer-managed CLI is older than the installer channel", async () => {
     const f = fixture({ currentVersion: "2.5.2" });
     try {
       sendStatus(f.harness);
@@ -53,7 +59,7 @@ describe("Kimi installation maintenance", () => {
       expect(response.error).toBeUndefined();
       expect(response.result).toMatchObject({
         executableName: "kimi",
-        executablePath: "/bin/kimi",
+        executablePath: OFFICIAL_KIMI,
         installed: true,
         installSource: "external",
         currentVersion: "2.5.2",
@@ -65,6 +71,30 @@ describe("Kimi installation maintenance", () => {
       sendStatus(f.harness, 2);
       await f.harness.waitForResponse(2);
       expect(f.fetchImpl).toHaveBeenCalledTimes(1);
+    } finally {
+      f.harness.restore();
+    }
+  });
+
+  it("does not offer the official installer when a shadowed Homebrew binary is outdated", async () => {
+    const f = fixture({
+      executablePath: HOMEBREW_KIMI,
+      currentVersion: "2.5.2",
+    });
+    try {
+      sendStatus(f.harness);
+      const response = await f.harness.waitForResponse(1);
+      expect(response.error).toBeUndefined();
+      expect(response.result).toMatchObject({
+        executableName: "kimi",
+        executablePath: HOMEBREW_KIMI,
+        installed: true,
+        installSource: "external",
+        currentVersion: "2.5.2",
+        latestVersion: "2.5.3",
+        needsUpdate: false,
+        installAction: null,
+      });
     } finally {
       f.harness.restore();
     }
@@ -134,6 +164,27 @@ describe("Kimi installation maintenance", () => {
     }
   });
 
+  it("declines an update when the resolved executable is not managed by this installer", async () => {
+    const f = fixture({
+      executablePath: HOMEBREW_KIMI,
+      currentVersion: "2.5.2",
+    });
+    try {
+      f.harness.sendRequest(1, "provider/installation/run", {
+        providerId: "kimi-code",
+        action: "update",
+        providerOptions: PROVIDER_OPTIONS,
+      });
+      const response = await f.harness.waitForResponse(1);
+      expect(response.result).toEqual({
+        available: false,
+        message: "Kimi Code update is not available on this host.",
+      });
+    } finally {
+      f.harness.restore();
+    }
+  });
+
   it("declines an update when no newer CLI is available", async () => {
     const f = fixture({ currentVersion: "2.5.3" });
     try {
@@ -150,5 +201,64 @@ describe("Kimi installation maintenance", () => {
     } finally {
       f.harness.restore();
     }
+  });
+
+  it("rejects a status request with missing providerId and a malformed launch spec as INVALID_PARAMS", async () => {
+    const f = fixture({ currentVersion: "2.5.2" });
+    try {
+      f.harness.sendRequest(1, "provider/installation/status", {
+        providerOptions: {
+          acpDialect: "kimi",
+          acpLaunchSpec: {
+            ...PROVIDER_OPTIONS.acpLaunchSpec,
+            args: 42,
+          },
+        },
+      });
+      const response = await f.harness.waitForResponse(1);
+      expect(response.result).toBeUndefined();
+      expect(response.error).toMatchObject({
+        code: -32602,
+      });
+      expect(String(response.error?.message)).toMatch(/Invalid params for "provider\/installation\/status"/);
+      expect(f.underlying.handleLine).not.toHaveBeenCalled();
+      expect(f.fetchImpl).not.toHaveBeenCalled();
+    } finally {
+      f.harness.restore();
+    }
+  });
+
+  it("rejects a malformed run request as INVALID_PARAMS instead of returning the installer", async () => {
+    const f = fixture({ currentVersion: "2.5.2" });
+    try {
+      f.harness.sendRequest(1, "provider/installation/run", {
+        action: "update",
+        providerOptions: {
+          acpDialect: "kimi",
+          acpLaunchSpec: {
+            ...PROVIDER_OPTIONS.acpLaunchSpec,
+            args: 42,
+          },
+        },
+      });
+      const response = await f.harness.waitForResponse(1);
+      expect(response.result).toBeUndefined();
+      expect(response.error).toMatchObject({
+        code: -32602,
+      });
+      expect(String(response.error?.message)).toMatch(/Invalid params for "provider\/installation\/run"/);
+      expect(f.underlying.handleLine).not.toHaveBeenCalled();
+    } finally {
+      f.harness.restore();
+    }
+  });
+});
+
+describe("official Kimi executable path", () => {
+  it("points at the official installer bin under the user home", () => {
+    expect(officialKimiExecutablePath("/Users/demo")).toBe(
+      join("/Users/demo", ".kimi-code", "bin", "kimi"),
+    );
+    expect(OFFICIAL_KIMI).toBe(join(homedir(), ".kimi-code", "bin", "kimi"));
   });
 });
